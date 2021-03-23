@@ -1,5 +1,5 @@
 import pluginConfig from './config';
-import IsochroneSidebarComponent from "./components/sidebar/openroute";
+import OpenRouteSidebarComponent from "./components/sidebar/openroute";
 const {base, inherit} = g3wsdk.core.utils;
 const Plugin = g3wsdk.core.plugin.Plugin;
 const ComponentsFactory = g3wsdk.gui.ComponentsFactory;
@@ -28,7 +28,7 @@ const _Plugin = function() {
   };
 
   this.setupGUI = function(){
-    const vueComponentObject = IsochroneSidebarComponent({
+    const vueComponentObject = OpenRouteSidebarComponent({
       service : this.service
     });
     const SiderBarComponent = ComponentsFactory.build(
