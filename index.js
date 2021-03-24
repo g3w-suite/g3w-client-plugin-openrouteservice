@@ -1,5 +1,4 @@
 import pluginConfig from './config';
-import OpenRouteSidebarComponent from "./components/sidebar/openroute";
 const {base, inherit} = g3wsdk.core.utils;
 const Plugin = g3wsdk.core.plugin.Plugin;
 const ComponentsFactory = g3wsdk.gui.ComponentsFactory;
@@ -28,21 +27,27 @@ const _Plugin = function() {
   };
 
   this.setupGUI = function(){
-    const vueComponentObject = OpenRouteSidebarComponent({
-      service : this.service
-    });
     const SiderBarComponent = ComponentsFactory.build(
       {
-        vueComponentObject
+        vueComponentObject:{}
       },
       {
         id: this.name,
         title: 'OPENROUTESERVICE',
         open: false,
-        collapsible: true,
+        collapsible: false,
         iconColor: 'purple',
         icon: GUI.getFontClass('layers'),
         mobile: true,
+        events: {
+          open :{
+            when: 'before',
+            cb: bool => {
+              console.log(bool);
+              this.service.openForm()
+            }
+          }
+        }
       }
     );
     const options = {
