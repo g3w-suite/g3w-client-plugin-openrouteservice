@@ -43,7 +43,6 @@ const _Plugin = function() {
           open :{
             when: 'before',
             cb: bool => {
-              console.log(bool);
               this.service.openForm()
             }
           }
