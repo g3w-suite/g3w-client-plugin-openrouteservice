@@ -4,12 +4,17 @@ const OpenRoutePanel = require('./components/panel/panel');
 const PluginService = g3wsdk.core.plugin.PluginService;
 const GUI = g3wsdk.gui.GUI;
 
-
 function Service() {
   base(this);
+  this.urls = APP.api.urls;
   // init function
   this.init = function(config={}){
     this.config = config;
+    // project id for api call url
+    const projectId = this.config.gid.split(":")[1];
+    this.initializeUrls(projectId);
+    // useful for task id url call
+    this.taskId = null;
     Object.keys(this.config).forEach(key =>{
       if (key === 'isochrones'){
         const formProfileInput = APP.form[key][1];
@@ -20,7 +25,16 @@ function Service() {
             value: keyProfile
           })
         })
-      } else {}
+      } else if (key === 'connections'){
+        const connections = this.config[key] || [];
+        connections.reverse().forEach(connection => {
+          APP.form.outputs.newlayer[1].input.options.values.unshift({
+            key: connection.name,
+            value: connection.id
+          });
+          APP.form.outputs.newlayer[1].value = connection.id
+        })
+      }
     });
     this.state = {
       form: APP.form
@@ -29,6 +43,13 @@ function Service() {
       service: this
     });
     this.emit('ready');
+  };
+
+  //set projectid to urls api
+  this.initializeUrls = function(projectId){
+    Object.keys(this.urls).forEach(key =>{
+      this.urls[key] = `${this.urls[key]}/${projectId}/`
+    });
   };
 
   this.openForm = function(bool=false){

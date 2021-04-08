@@ -1,6 +1,5 @@
 <template>
     <div class="g3w-openservice-plugin-panel form-group" style="height: 100%;">
-        <bar-loader :loading="loading"></bar-loader>
         <div class="form-group" style="display: flex; flex-direction: column; height: 100%">
             <div id="openrouteservice-plugin-form-isochrones" class="openrouteservice-form">
                 <h5 class="openrouteservice-form-header skin-color">ISOCHRONE</h5>
@@ -12,7 +11,7 @@
                 </form>
             </div>
             <div id="openrouteservice-plugin-form-inputs" class="openrouteservice-form">
-                <h5 class="openrouteservice-form-header skin-color">INPUTS</h5>
+                <h5 class="openrouteservice-form-header skin-color">INPUT</h5>
                 <form class="openrouteservice-form-inputs">
                     <div class="openrouteservice-radio-buttons">
                         <div>
@@ -20,7 +19,7 @@
                             <label for="mapcoordinates">Map Coordinates</label>
                         </div>
                         <div>
-                            <input class="magic-radio" type="radio" name="radio" value="existingpointlayer" id="pointlayer"  v-model="currentinputs">
+                            <input class="magic-radio" type="radio" name="radio" value="existingpointlayer" id="pointlayer" :disabled="inputs.existingpointlayer[0].input.options.values.length === 0" v-model="currentinputs">
                             <label for="pointlayer">Existing Layer Point</label>
                         </div>
                     </div>
@@ -39,7 +38,7 @@
                 </form>
             </div>
             <div id="openrouteservice-plugin-form-outputs" class="openrouteservice-form">
-                <h5 class="openrouteservice-form-header skin-color">OUTPUTS</h5>
+                <h5 class="openrouteservice-form-header skin-color">OUTPUT</h5>
                 <form class="openrouteservice-form-inputs">
                     <div class="openrouteservice-radio-buttons">
                         <div>
@@ -66,6 +65,7 @@
                 </form>
             </div>
             <div class="openrouteservice-plugin-footer">
+                <bar-loader :loading="loading"></bar-loader>
                 <button style="font-weight: bold" class="btn btn-block skin-background-color" v-disabled="!validForm" @click.stop="run">Run</button>
             </div>
         </div>
@@ -74,6 +74,7 @@
 
 <script>
     const Inputs =  g3wsdk.gui.vue.Inputs.InputsComponents;
+    const GUI = g3wsdk.gui.GUI;
     export default {
         name: 'OpenRouteServiceForm',
         data(){
@@ -128,8 +129,10 @@
           },
           run(){
               this.loading = true;
+              GUI.disableSideBar(true)
               setTimeout(()=>{
                   this.loading = false;
+                  GUI.disableSideBar(false)
               }, 3000)
           }
         },
