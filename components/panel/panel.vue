@@ -1,7 +1,7 @@
 <template>
-    <div class="g3w-openservice-plugin-panel form-group" style="height: 100%">
+    <div class="g3w-openservice-plugin-panel form-group" style="height: 100%;">
         <bar-loader :loading="loading"></bar-loader>
-        <div class="form-group">
+        <div class="form-group" style="display: flex; flex-direction: column; height: 100%">
             <div id="openrouteservice-plugin-form-isochrones" class="openrouteservice-form">
                 <h5 class="openrouteservice-form-header skin-color">ISOCHRONE</h5>
                 <form class="openrouteservice-form-inputs">
@@ -14,14 +14,14 @@
             <div id="openrouteservice-plugin-form-inputs" class="openrouteservice-form">
                 <h5 class="openrouteservice-form-header skin-color">INPUTS</h5>
                 <form class="openrouteservice-form-inputs">
-                    <div style="display: flex; justify-content: space-between">
+                    <div class="openrouteservice-radio-buttons">
                         <div>
                             <input class="magic-radio" type="radio" name="radio" value="mapcoordinates" id="mapcoordinates" v-model="currentinputs">
                             <label for="mapcoordinates">Map Coordinates</label>
                         </div>
                         <div>
-                            <input class="magic-radio" type="radio" name="radio" value="existingpointlayer" id="pointlayer" v-model="currentinputs">
-                            <label for="pointlayer">Existing Layer Point (Asyncronous)</label>
+                            <input class="magic-radio" type="radio" name="radio" value="existingpointlayer" id="pointlayer"  v-model="currentinputs">
+                            <label for="pointlayer">Existing Layer Point</label>
                         </div>
                     </div>
                     <div v-if="currentinputs === 'mapcoordinates'">
@@ -41,7 +41,7 @@
             <div id="openrouteservice-plugin-form-outputs" class="openrouteservice-form">
                 <h5 class="openrouteservice-form-header skin-color">OUTPUTS</h5>
                 <form class="openrouteservice-form-inputs">
-                    <div style="display: flex; justify-content: space-between">
+                    <div class="openrouteservice-radio-buttons">
                         <div>
                             <input class="magic-radio" type="radio" name="radio" id="newlayer" value="newlayer" v-model="currentoutput">
                             <label for="newlayer">New Layer</label>
@@ -65,8 +65,8 @@
                     </div>
                 </form>
             </div>
-            <div class="form-group">
-                <button id="g3w-openrouteservice-plugin-run-bottom" class="btn btn-block pull-right skin-color" v-disabled="!validForm" @click.stop="run">Run</button>
+            <div class="openrouteservice-plugin-footer">
+                <button style="font-weight: bold" class="btn btn-block skin-background-color" v-disabled="!validForm" @click.stop="run">Run</button>
             </div>
         </div>
     </div>
@@ -104,8 +104,27 @@
             }
         },
         methods: {
-          validate(){
-             this.validForm = this.isochrones.reduce((accumulator, current) => accumulator && current.validate.valid, true)
+          validate(input){
+             if (input.name === 'range') {
+                 const intervalinpuit = this.isochrones[4];
+                 input.value = input.value && input.value.trim().match(/[\d+],{0,1}/g);
+                 input.value = input.value && input.value.join('')
+                 const values = input.value ? input.value.split(',').filter(value => value) : [];
+                 if (values.length === 0) {
+                     input.value = null;
+                     intervalinpuit.editable = true;
+                     input.validate.valid = false;
+                     intervalinpuit.input.options.max = 0;
+                     intervalinpuit.value = 0;
+                 } else if (values.length > 1){
+                     intervalinpuit.editable = false;
+                     intervalinpuit.input.options.max = 0;
+                 } else {
+                     intervalinpuit.editable = true;
+                     intervalinpuit.input.options.max = 1*input.value.replace(',','');
+                 }
+             }
+             this.validForm = this.isochrones.reduce((accumulator, current) => accumulator && (current.validate.valid === undefined || current.validate.valid), true)
           },
           run(){
               this.loading = true;
@@ -114,26 +133,28 @@
               }, 3000)
           }
         },
-        async mounted(){
-        }
+        async mounted(){}
     };
 </script>
 
 <style scoped>
-    .openrouteservice-form{
-        margin-bottom: 10px;
-    }
-    #g3w-openrouteservice-plugin-run-bottom {
-        margin-top: 10px;
+    .openrouteservice-plugin-footer {
+        margin-top: auto;
         font-weight: bold;
     }
     .row {
-        min-height: 50px;
+        padding: 2px;
+    }
+    .openrouteservice-radio-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin:5px 0 5px 0;
     }
     .openrouteservice-form-header {
         font-weight: bold;
         padding-bottom: 5px;
+        margin: 0 0 2px 0;
         width: 100%;
-        border-bottom: 2px solid #eeeeee;
+        border-bottom: 1px solid #FFFFFF;
     }
 </style>

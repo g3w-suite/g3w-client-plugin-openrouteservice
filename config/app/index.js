@@ -21,7 +21,7 @@ export default {
       {
         name: "profiles",
         type: "varchar",
-        label: "Profiles",
+        label: "Profile",
         dropdownParent: false,
         nullOption: false,
         editable: true,
@@ -73,7 +73,7 @@ export default {
       },
       {
         name: "range",
-        type: "float",
+        type: "varchar",
         label: "Range",
         editable: true,
         validate: {
@@ -83,29 +83,24 @@ export default {
         pk: false,
         default: "",
         input: {
-          type: "float",
-          options: {
-            min:0
-          }
+          type: "text",
+          options: {}
         },
-        value: 0
+        value: '0'
       },
       {
         name: "interval",
         type: "float",
         label: "Interval",
         editable: true,
-        validate: {
-          required: true,
-          valid: false
-        },
+        validate: {},
         pk: false,
         default: "",
         input: {
           type: "slider",
           options: {
             min:0,
-            max: 10,
+            max: 0,
             step:1
           }
         },
@@ -143,7 +138,28 @@ export default {
           type: "color",
           options: {}
         },
-        value: null
+        value: '#FF0000'
+      },
+      {
+        name: "transparency",
+        type: "float",
+        label: "Transparency",
+        editable: true,
+        validate: {
+          required: true,
+          valid: false
+        },
+        pk: false,
+        default: "",
+        input: {
+          type: "slider",
+          options: {
+            min:0,
+            max: 1,
+            step:0.1
+          }
+        },
+        value: 0
       },
     ],
 

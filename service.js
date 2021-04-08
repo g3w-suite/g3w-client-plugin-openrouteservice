@@ -20,9 +20,7 @@ function Service() {
             value: keyProfile
           })
         })
-      } else {
-        console.log(key, this.config[key])
-      }
+      } else {}
     });
     this.state = {
       form: APP.form
