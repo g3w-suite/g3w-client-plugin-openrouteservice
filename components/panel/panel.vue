@@ -19,21 +19,13 @@
                             <label for="mapcoordinates">Map Coordinates</label>
                         </div>
                         <div>
-                            <input class="magic-radio" type="radio" name="radio" value="existingpointlayer" id="pointlayer" :disabled="inputs.existingpointlayer[0].input.options.values.length === 0" v-model="currentinputs">
+                            <input class="magic-radio" type="radio" name="radio" value="from_layer" id="pointlayer" :disabled="inputs.from_layer[0].input.options.values.length === 0" v-model="currentinputs">
                             <label for="pointlayer">Existing Layer Point</label>
                         </div>
                     </div>
-                    <div v-if="currentinputs === 'mapcoordinates'">
-                        <div class="row" v-for="input in inputs.mapcordinates" :key="input.name">
-                            <component @changeinput="validate" :is="`${input.input.type}_input`" :state="input" ></component>
-                            <span style="height: 20px; width: 100%; "></span>
-                        </div>
-                    </div>
-                    <div v-else>
-                        <div class="row" v-for="input in inputs.existingpointlayer" :key="input.name">
-                            <component @changeinput="validate" :is="`${input.input.type}_input`" :state="input" ></component>
-                            <span style="height: 20px; width: 100%; "></span>
-                        </div>
+                    <div class="row" v-for="input in inputs[this.currentinputs]" :key="input.name">
+                        <component @changeinput="validate" :is="`${input.input.type}_input`" :state="input" ></component>
+                        <span style="height: 20px; width: 100%; "></span>
                     </div>
                 </form>
             </div>
@@ -42,25 +34,17 @@
                 <form class="openrouteservice-form-inputs">
                     <div class="openrouteservice-radio-buttons">
                         <div>
-                            <input class="magic-radio" type="radio" name="radio" id="newlayer" value="newlayer" v-model="currentoutput">
+                            <input class="magic-radio" type="radio" name="radio" id="newlayer" value="newlayer" v-model="currentoutputs">
                             <label for="newlayer">New Layer</label>
                         </div>
                         <div>
-                            <input class="magic-radio" type="radio" name="radio" value="existinglayer" id="existinglayer" v-model="currentoutput">
+                            <input class="magic-radio" type="radio" name="radio" value="existinglayer" :disabled="this.outputs.existinglayer[0].input.options.values.length === 0" id="existinglayer" v-model="currentoutputs">
                             <label for="existinglayer">Existing Layer</label>
                         </div>
                     </div>
-                    <div v-if="currentoutput === 'newlayer'">
-                        <div class="row" v-for="input in outputs.newlayer" :key="input.name">
-                            <component @changeinput="validate" :is="`${input.input.type}_input`" :state="input" ></component>
-                            <span style="height: 20px; width: 100%; "></span>
-                        </div>
-                    </div>
-                    <div v-else>
-                        <div class="row" v-for="input in outputs.existinglayer" :key="input.name">
-                            <component @changeinput="validate" :is="`${input.input.type}_input`" :state="input" ></component>
-                            <span style="height: 20px; width: 100%; "></span>
-                        </div>
+                    <div class="row" v-for="input in outputs[this.currentoutputs]" :key="input.name">
+                        <component @changeinput="validate" :is="`${input.input.type}_input`" :state="input" ></component>
+                        <span style="height: 20px; width: 100%; "></span>
                     </div>
                 </form>
             </div>
@@ -82,8 +66,8 @@
                 loading: false,
                 validForm: false,
                 state: this.$options.service.state,
-                currentinputs: 'mapcoordinates', //mapcoordinates, exintgpointlayer
-                currentoutput: 'newlayer'
+                currentinputs: 'mapcoordinates', //mapcoordinates, from_layer
+                currentoutputs: 'newlayer'
 
             }
         },
@@ -106,35 +90,49 @@
         },
         methods: {
           validate(input){
-             if (input.name === 'range') {
-                 const intervalinpuit = this.isochrones[4];
-                 input.value = input.value && input.value.trim().match(/[\d+],{0,1}/g);
-                 input.value = input.value && input.value.join('')
-                 const values = input.value ? input.value.split(',').filter(value => value) : [];
-                 if (values.length === 0) {
-                     input.value = null;
-                     intervalinpuit.editable = true;
-                     input.validate.valid = false;
-                     intervalinpuit.input.options.max = 0;
-                     intervalinpuit.value = 0;
-                 } else if (values.length > 1){
-                     intervalinpuit.editable = false;
-                     intervalinpuit.input.options.max = 0;
-                 } else {
-                     intervalinpuit.editable = true;
-                     intervalinpuit.input.options.max = 1*input.value.replace(',','');
-                 }
+             if (input){
+                if (input.name === 'range') {
+                    const intervalinpuit = this.isochrones[4];
+                    input.value = input.value && input.value.trim().match(/[\d+],{0,1}/g);
+                    input.value = input.value && input.value.join('')
+                    const values = input.value ? input.value.split(',').filter(value => value) : [];
+                    if (values.length === 0) {
+                        input.value = null;
+                        intervalinpuit.editable = true;
+                        input.validate.valid = false;
+                        intervalinpuit.input.options.max = 0;
+                        intervalinpuit.value = 0;
+                    } else if (values.length > 1){
+                        intervalinpuit.editable = false;
+                        intervalinpuit.input.options.max = 0;
+                    } else {
+                        intervalinpuit.editable = true;
+                        intervalinpuit.input.options.max = 1*input.value.replace(',','');
+                    }
+                }
              }
-             this.validForm = this.isochrones.reduce((accumulator, current) => accumulator && (current.validate.valid === undefined || current.validate.valid), true)
+             this.validForm = [...this.isochrones,
+                 ...this.inputs[this.currentinputs],
+                 ...this.outputs[this.currentoutputs]].reduce((accumulator, current) => accumulator && (current.validate.valid === undefined || current.validate.valid), true)
           },
-          run(){
+          async run(){
               this.loading = true;
-              GUI.disableSideBar(true)
-              setTimeout(()=>{
-                  this.loading = false;
-                  GUI.disableSideBar(false)
-              }, 3000)
+              GUI.disableSideBar(true);
+              await this.$options.service.run({
+                  api: this.currentinputs,
+                  inputs: [...this.isochrones, ...this.inputs[this.currentinputs], ...this.outputs[this.currentoutputs]]
+              });
+              this.loading = false;
+              GUI.disableSideBar(false)
           }
+        },
+        watch: {
+            currentinputs(){
+                this.validate()
+            },
+            currentoutputs(){
+                this.validate()
+            }
         },
         async mounted(){}
     };

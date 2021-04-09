@@ -6,35 +6,6 @@ export default {
      isochrone_from_layer:  "/openrouteservice/api/isochrone_from_layer", //TO ADD PROJECTID AND LAYER ID
      task: "/openrouteservice/api/isochrone_from_layer_result" //TO ADD PROJECTID AND TASK ID RETURNED BY ABOVE API
     },
-    post:{
-      data: {
-        // Append to existing layer
-        'qgis_layer_id': 'layer_id', // QGIS vector layer id, mutually exclusive with connection_id
-        // In case of new layer:
-        'connection_id': null, // mutually exclusive with layer_id
-        'new_layer_name': null, // mutually exclusive with layer_id
-        '': null, // mutually exclusive with layer_id
-        'profile': "driving-car",
-        'color': ['Red', 'Green', 'Blue'],  // 0-255 RGB values
-        'transparency': 0.5, // 0-1, 0: fully opaque, 1: fully transparent
-        'name' : 'name of the new isochrone',
-        'stroke_width': 0.26, // float, QGIS default is 0.26
-        // This goes straight to ORS API
-        'ors': {
-          "locations":[[10.859513,43.401984]],  // May be null in case of `layer_id`
-          "range_type": "time",  // Time or distance
-          "range": [480],
-          "interval": 60,
-          //fixed
-          "location_type": "start",
-          "attributes":[
-            "area",
-            "reachfactor",
-            "total_pop"
-          ]
-        }
-      }
-    }
   },
   form: {
     isochrones: [
@@ -78,7 +49,7 @@ export default {
         value: null
       },
       {
-        name: "mode",
+        name: "range_type",
         type: "varchar",
         label: "Mode",
         dropdownParent: false,
@@ -240,9 +211,9 @@ export default {
           value: 0
         },
       ],
-      existingpointlayer: [
+      from_layer: [
         {
-          name: "existingpoitlayer",
+          name: "form_layer",
           type: "varchar",
           label: "Layer",
           dropdownParent: false,
@@ -265,7 +236,6 @@ export default {
         },
       ]
     },
-
     outputs: {
       newlayer: [
         {
