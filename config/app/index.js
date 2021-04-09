@@ -167,7 +167,7 @@ export default {
             step:0.1
           }
         },
-        value: 0
+        value: 0.5
       },
     ],
     inputs: {
