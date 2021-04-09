@@ -1,5 +1,7 @@
 import {APP} from './config/index';
 const { base, inherit, XHR , colorHEXToRGB} =  g3wsdk.core.utils;
+const ApplicationService = g3wsdk.core.ApplicationService;
+const TaskService = g3wsdk.core.task.TaskService;
 const OpenRoutePanel = require('./components/panel/panel');
 const ProjectsRegistry = g3wsdk.core.project.ProjectsRegistry;
 const PluginService = g3wsdk.core.plugin.PluginService;
@@ -35,7 +37,7 @@ function Service() {
           outputLayer.input.options.values.push({
             key: ProjectsRegistry.getCurrentProject().state.layers.find(layer.id === value).name,
             value
-          }))
+          }));
         Object.keys(this.config[key].profiles).forEach(keyProfile =>{
           formProfileInput.value = formProfileInput.value === null ? keyProfile : formProfileInput.value;
           formProfileInput.input.options.values.push({
@@ -76,13 +78,6 @@ function Service() {
   };
 
   this.run = async function({api, inputs=[]}){
-    let locations = null;
-    if (api === 'mapcoordinates'){
-      const longitude = 1*inputs.find(input => input.name === 'longitude').value;
-      const latitude = 1*inputs.find(input=> input.name === 'latitude').value;
-      locations = [[longitude, latitude]]
-    }
-
     //default params
     const data = {
       // Append to existing layer
@@ -110,13 +105,13 @@ function Service() {
         ]
       }
     };
-    data.ors.locations = locations;
     inputs.forEach(({name, value}) =>{
-      if (name === 'range'){
-        value = value.split(',').map(rangevalue => 1*rangevalue)
-      } else if (name === 'color'){
-        value = colorHEXToRGB(value);
-      }
+      if (name === 'range') value = value.split(',').map(rangevalue => 1 * rangevalue)
+      else if (name === 'interval'){
+        if (data.ors.range.length > 1){
+          value = null
+        } else value = 1*value;
+      } else if (name === 'color') value = colorHEXToRGB(value);
       if (data[name] !== undefined){
         data[name] = value;
       } else if (data.ors[name] !== undefined){
@@ -124,14 +119,18 @@ function Service() {
       }
     });
     try {
-      const response = XHR.post({
+      const response = await XHR.post({
         url: this.urls[`isochrone_${api}`],
         data: JSON.stringify(data),
         contentType: "application/json"
       });
-      console.log(response)
     } catch(err){
-      console.log(err)
+      const message = GUI.errorToMessage(err);
+      GUI.showUserMessage({
+        type: 'alert',
+        message,
+        textMessage: true
+      })
     }
   };
 

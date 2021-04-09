@@ -16,7 +16,7 @@
                     <div class="openrouteservice-radio-buttons">
                         <div>
                             <input class="magic-radio" type="radio" name="radio" value="mapcoordinates" id="mapcoordinates" v-model="currentinputs">
-                            <label for="mapcoordinates">Map Coordinates</label>
+                            <label for="mapcoordinates">Map Coordinates (EPSG:4326)</label>
                         </div>
                         <div>
                             <input class="magic-radio" type="radio" name="radio" value="from_layer" id="pointlayer" :disabled="inputs.from_layer[0].input.options.values.length === 0" v-model="currentinputs">
@@ -114,6 +114,7 @@
              this.validForm = [...this.isochrones,
                  ...this.inputs[this.currentinputs],
                  ...this.outputs[this.currentoutputs]].reduce((accumulator, current) => accumulator && (current.validate.valid === undefined || current.validate.valid), true)
+              console.log(this.validForm)
           },
           async run(){
               this.loading = true;

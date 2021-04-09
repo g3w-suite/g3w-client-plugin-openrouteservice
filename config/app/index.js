@@ -173,42 +173,30 @@ export default {
     inputs: {
       mapcoordinates: [
         {
-          name: "longitude",
+          name: 'locations',
           type: "float",
-          label: "Longitude",
+          labels: {
+            lon: "Longitude",
+            lat: "Latitude"
+          },
+          dropdownParent: false,
+          nullOption: false,
           editable: true,
           validate: {
             required: true,
-            valid: false
+            valid: true
           },
           pk: false,
           default: "",
           input: {
-            type: "float",
-            options: {
-              min:0
-            }
+            type: "lonlat",
+            options: {},
           },
-          value: 0
-        },
-        {
-          name: "latitude",
-          type: "float",
-          label: "Latitude",
-          editable: true,
-          validate: {
-            required: true,
-            valid: false
+          values: {
+            lon: 0,
+            lat: 0
           },
-          pk: false,
-          default: "",
-          input: {
-            type: "float",
-            options: {
-              min:0
-            }
-          },
-          value: 0
+          value: [[0, 0]]
         },
       ],
       from_layer: [
@@ -273,15 +261,15 @@ export default {
             options: {
               values: [
                 {
-                  key: "Shapefile", //'_', '', ''
-                  value: "__shapefile_"
+                  key: "New Shapefile", //'_', '', ''
+                  value: "__shapefile__"
                 },
                 {
-                  key: "Spatialite",
+                  key: "New Spatialite",
                   value:"__spatialite__"
                 },
                 {
-                  key: 'Geopackage',
+                  key: 'New Geopackage',
                   value: "__geopackage__"
                 }
               ],

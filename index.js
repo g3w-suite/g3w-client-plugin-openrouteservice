@@ -8,6 +8,7 @@ const GUI = g3wsdk.gui.GUI;
 
 const _Plugin = function() {
   base(this);
+  let SiderBarComponent;
   this.name = 'openrouteservice';
   this.init = function() {
     addI18nPlugin({
@@ -27,7 +28,7 @@ const _Plugin = function() {
   };
 
   this.setupGUI = function(){
-    const SiderBarComponent = ComponentsFactory.build(
+    SiderBarComponent = ComponentsFactory.build(
       {
         vueComponentObject:{}
       },
@@ -58,6 +59,7 @@ const _Plugin = function() {
   };
 
   this.unload = function() {
+    GUI.removeComponent(this.name, 'sidebar');
     this.service.clear();
   }
 };
