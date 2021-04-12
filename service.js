@@ -33,11 +33,13 @@ function Service() {
       if (key === 'isochrones'){
         const formProfileInput = APP.form[key][1];
         const outputLayer = APP.form.outputs.existinglayer[0];
-        this.config[key].compatible.forEach(value =>
-          outputLayer.input.options.values.push({
-            key: ProjectsRegistry.getCurrentProject().state.layers.find(layer.id === value).name,
+        this.config[key].compatible.forEach(value =>{
+          const findLayer = ProjectsRegistry.getCurrentProject().state.layers.find(layer => layer.id === value);
+          findLayer && outputLayer.input.options.values.push({
+            key: findLayer.name,
             value
-          }));
+          })
+        });
         Object.keys(this.config[key].profiles).forEach(keyProfile =>{
           formProfileInput.value = formProfileInput.value === null ? keyProfile : formProfileInput.value;
           formProfileInput.input.options.values.push({
