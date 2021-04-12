@@ -50,12 +50,10 @@ const _Plugin = function() {
         }
       }
     );
-    const options = {
+
+    GUI.addComponent(SiderBarComponent, 'sidebar', {
       position: 1
-    };
-
-    GUI.addComponent(SiderBarComponent, 'sidebar', options);
-
+    });
   };
 
   this.unload = function() {
