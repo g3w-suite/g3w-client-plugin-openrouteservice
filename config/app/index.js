@@ -66,7 +66,7 @@ export default {
           options: {
             values: [
               {
-                key: "Time (minutes)",
+                key: "Time (seconds)",
                 value: "time"
               },
               {
@@ -108,7 +108,7 @@ export default {
           type: "slider",
           options: {
             min:0,
-            max: 0,
+            max: 10,
             step:1
           }
         },
@@ -167,7 +167,7 @@ export default {
             step:0.1
           }
         },
-        value: 0.5
+        value: 0.8
       },
     ],
     inputs: {

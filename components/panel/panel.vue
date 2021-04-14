@@ -59,6 +59,11 @@
 <script>
     const Inputs =  g3wsdk.gui.vue.Inputs.InputsComponents;
     const GUI = g3wsdk.gui.GUI;
+    const MAX_RANGE = {
+        time: 3600,
+        distance: 100000
+    };
+
     export default {
         name: 'OpenRouteServiceForm',
         data(){
@@ -94,27 +99,28 @@
                 if (input.name === 'range') {
                     const intervalinpuit = this.isochrones[4];
                     input.value = input.value && input.value.trim().match(/[\d+],{0,1}/g);
-                    input.value = input.value && input.value.join('')
+                    input.value = input.value && input.value.join('');
                     const values = input.value ? input.value.split(',').filter(value => value) : [];
                     if (values.length === 0) {
                         input.value = null;
                         intervalinpuit.editable = true;
                         input.validate.valid = false;
-                        intervalinpuit.input.options.max = 0;
                         intervalinpuit.value = 0;
-                    } else if (values.length > 1){
+                    } else if (values.length > 1) {
                         intervalinpuit.editable = false;
-                        intervalinpuit.input.options.max = 0;
                     } else {
+                        const range_typeinpuit = this.isochrones[2];
                         intervalinpuit.editable = true;
-                        intervalinpuit.input.options.max = 1*input.value.replace(',','');
+                        input.value = input.value > MAX_RANGE[range_typeinpuit.value] ? `${MAX_RANGE[range_typeinpuit.value]}` : input.value;
                     }
+                }  else if (input.name === 'range_type'){
+                    const rangeinpuit = this.isochrones[3];
+                    rangeinpuit.value = 1*rangeinpuit.value > MAX_RANGE[input.value] ? `${MAX_RANGE[input.value]}` : rangeinpuit.value;
                 }
              }
              this.validForm = [...this.isochrones,
                  ...this.inputs[this.currentinputs],
                  ...this.outputs[this.currentoutputs]].reduce((accumulator, current) => accumulator && (current.validate.valid === undefined || current.validate.valid), true)
-              console.log(this.validForm)
           },
           async run(){
               this.loading = true;

@@ -1,6 +1,7 @@
 import {APP} from './config/index';
 const { base, inherit, XHR , colorHEXToRGB} =  g3wsdk.core.utils;
 const ApplicationService = g3wsdk.core.ApplicationService;
+const CatalogLayersStoresRegistry = g3wsdk.core.catalog.CatalogLayersStoresRegistry;
 const TaskService = g3wsdk.core.task.TaskService;
 const OpenRoutePanel = require('./components/panel/panel');
 const ProjectsRegistry = g3wsdk.core.project.ProjectsRegistry;
@@ -126,8 +127,20 @@ function Service() {
         data: JSON.stringify(data),
         contentType: "application/json"
       });
-    } catch(err){
-      const message = GUI.errorToMessage(err);
+      if (response.result){
+        if (data.qgis_layer_id) {
+          const layer = CatalogLayersStoresRegistry.getLayerById(data.qgis_layer_id);
+          layer && layer.change();
+        } else ApplicationService.reloadCurrentProject()
+      } else {
+        GUI.showUserMessage({
+          type: 'alert',
+          message: response.error,
+          textMessage: true
+        })
+      }
+    } catch(error){
+      const message = error.responseJSON ? error.responseJSON.error : 'server_error';
       GUI.showUserMessage({
         type: 'alert',
         message,
