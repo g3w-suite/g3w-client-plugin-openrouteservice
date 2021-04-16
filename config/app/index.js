@@ -179,6 +179,7 @@ export default {
             lon: "Longitude",
             lat: "Latitude"
           },
+          epsg: 'EPSG:4326', //SET OUTPUTEPSG
           dropdownParent: false,
           nullOption: false,
           editable: true,
