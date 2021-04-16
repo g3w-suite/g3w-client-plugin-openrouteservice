@@ -62,9 +62,7 @@ function Service() {
     this.state = {
       form: APP.form
     };
-    this.openFormPanel = new OpenRoutePanel({
-      service: this
-    });
+    
     this.emit('ready');
   };
 
@@ -76,6 +74,9 @@ function Service() {
   };
 
   this.openForm = function(bool=false){
+    this.openFormPanel = new OpenRoutePanel({
+      service: this
+    });
     GUI.closeContent();
     this.openFormPanel.show()
   };
@@ -151,7 +152,7 @@ function Service() {
 
   // clear function when clear when unload plugin
   this.clear = function(){
-
+    this.openFormPanel = null;
   }
 }
 

@@ -103,7 +103,7 @@
                     const values = input.value ? input.value.split(',').filter(value => value) : [];
                     if (values.length === 0) {
                         input.value = null;
-                        intervalinpuit.editable = true;
+                        intervalinpuit.editable = false;
                         input.validate.valid = false;
                         intervalinpuit.value = 0;
                     } else if (values.length > 1) {
@@ -112,6 +112,7 @@
                         const range_typeinpuit = this.isochrones[2];
                         intervalinpuit.editable = true;
                         input.value = input.value > MAX_RANGE[range_typeinpuit.value] ? `${MAX_RANGE[range_typeinpuit.value]}` : input.value;
+                        intervalinpuit.editable = 1*input.value > 0;
                     }
                 }  else if (input.name === 'range_type'){
                     const rangeinpuit = this.isochrones[3];
@@ -141,7 +142,7 @@
                 this.validate()
             }
         },
-        async mounted(){}
+        async mounted(){},
     };
 </script>
 

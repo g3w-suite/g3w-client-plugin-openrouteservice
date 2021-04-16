@@ -100,7 +100,7 @@ export default {
         name: "interval",
         type: "float",
         label: "Interval",
-        editable: true,
+        editable: false,
         validate: {},
         pk: false,
         default: "",
