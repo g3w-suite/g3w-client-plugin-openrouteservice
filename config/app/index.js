@@ -281,7 +281,7 @@ export default {
       ],
       existinglayer: [
         {
-          name: "outputexistinglayer",
+          name: "qgis_layer_id",
           type: "varchar",
           label: "Existing Layer",
           dropdownParent: false,

@@ -59,11 +59,20 @@ function Service() {
         })
       }
     });
+
     this.state = {
-      form: APP.form
+      form: null
     };
     
     this.emit('ready');
+  };
+
+  /**
+   * Used to create a init start form 
+   */
+  this.createInitStateForm = function(){
+    const form = JSON.parse(JSON.stringify(APP.form));
+    this.state.form = form;
   };
 
   //set projectid to urls api
@@ -74,6 +83,7 @@ function Service() {
   };
 
   this.openForm = function(bool=false){
+    this.createInitStateForm();
     this.openFormPanel = new OpenRoutePanel({
       service: this
     });
@@ -81,7 +91,7 @@ function Service() {
     this.openFormPanel.show()
   };
 
-  this.run = async function({api, inputs=[]}){
+  this.run = async function({api, output, inputs=[]}){
     //default params
     const data = {
       // Append to existing layer
@@ -110,7 +120,7 @@ function Service() {
       }
     };
     inputs.forEach(({name, value}) =>{
-      if (name === 'range') value = value.split(',').map(rangevalue => 1 * rangevalue)
+      if (name === 'range') value = value.split(',').map(rangevalue => 1 * rangevalue);
       else if (name === 'interval'){
         if (data.ors.range.length > 1){
           value = null
@@ -120,7 +130,7 @@ function Service() {
         data[name] = value;
       } else if (data.ors[name] !== undefined){
         data.ors[name] = value
-      }
+      } 
     });
     try {
       const response = await XHR.post({

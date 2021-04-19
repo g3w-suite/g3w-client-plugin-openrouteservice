@@ -128,6 +128,7 @@
               GUI.disableSideBar(true);
               await this.$options.service.run({
                   api: this.currentinputs,
+                  output: this.currentoutputs,
                   inputs: [...this.isochrones, ...this.inputs[this.currentinputs], ...this.outputs[this.currentoutputs]]
               });
               this.loading = false;
@@ -135,10 +136,20 @@
           }
         },
         watch: {
-            currentinputs(){
+            currentinputs(value){
+                this.inputs[value].forEach(input => {
+                    if (input.input.type === 'select' && input.value === null){
+                        input.value = input.input.options.values[0].value;
+                    }
+                });
                 this.validate()
             },
-            currentoutputs(){
+            currentoutputs(value){
+                this.outputs[value].forEach(input => {
+                    if (input.input.type === 'select' && input.value === null){
+                        input.value = input.input.options.values[0].value;
+                    }
+                });
                 this.validate()
             }
         },
