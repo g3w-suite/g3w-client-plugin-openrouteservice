@@ -83,6 +83,7 @@ export default {
         name: "range",
         type: "varchar",
         label: "Range",
+        info: "[MIN: 0 - MAX: 3600]",
         editable: true,
         validate: {
           required: true,
@@ -108,7 +109,7 @@ export default {
           type: "slider",
           options: {
             min:0,
-            max: 10,
+            max: 0,
             step:1
           }
         },

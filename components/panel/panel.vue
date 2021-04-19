@@ -97,9 +97,10 @@
           validate(input){
              if (input){
                 if (input.name === 'range') {
+                    const range_typeinpuit = this.isochrones[2];
                     const intervalinpuit = this.isochrones[4];
-                    input.value = input.value && input.value.trim().match(/[\d+],{0,1}/g);
-                    input.value = input.value && input.value.join('');
+                    input.value = input.value && input.value.trim().match(/\d+,{0,1}/g).splice(0,10);
+                    input.value = input.value && input.value.filter(value => 1*value.replace(',','') <= MAX_RANGE[range_typeinpuit.value]).join('');
                     const values = input.value ? input.value.split(',').filter(value => value) : [];
                     if (values.length === 0) {
                         input.value = null;
@@ -108,15 +109,22 @@
                         intervalinpuit.value = 0;
                     } else if (values.length > 1) {
                         intervalinpuit.editable = false;
+                        intervalinpuit.value = 0;
+                        intervalinpuit.input.options.min = 0;
+                        intervalinpuit.input.options.max = 0;
                     } else {
-                        const range_typeinpuit = this.isochrones[2];
                         intervalinpuit.editable = true;
                         input.value = input.value > MAX_RANGE[range_typeinpuit.value] ? `${MAX_RANGE[range_typeinpuit.value]}` : input.value;
                         intervalinpuit.editable = 1*input.value > 0;
+                        if (intervalinpuit.editable){
+                            intervalinpuit.value = intervalinpuit.input.options.min = Math.round(1*input.value / 10);
+                            intervalinpuit.input.options.max = 1*input.value;
+                        }
                     }
                 }  else if (input.name === 'range_type'){
                     const rangeinpuit = this.isochrones[3];
                     rangeinpuit.value = 1*rangeinpuit.value > MAX_RANGE[input.value] ? `${MAX_RANGE[input.value]}` : rangeinpuit.value;
+                    rangeinpuit.info = `[MIN:0 - MAX: ${MAX_RANGE[input.value]}]`
                 }
              }
              this.validForm = [...this.isochrones,
@@ -172,7 +180,7 @@
     }
     .openrouteservice-form-header {
         font-weight: bold;
-        padding-bottom: 5px;
+        padding-bottom: 3px;
         margin: 0 0 2px 0;
         width: 100%;
         border-bottom: 1px solid #FFFFFF;
