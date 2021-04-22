@@ -19,7 +19,7 @@ function Service() {
     this.initializeUrls(projectId);
     // get current poinMulpipoint layer from project
     const pointMulipointsLayers = ProjectsRegistry.getCurrentProject().state.layers
-      .filter(layer => layer.geometrytype === "Point" || layer.geometrytype === "MultiPolint").map(layer => ({
+      .filter(layer => layer.geometrytype === "Point" || layer.geometrytype === "MultiPoint").map(layer => ({
       key: layer.name,
       value: layer.id
     }));
@@ -92,6 +92,7 @@ function Service() {
   };
 
   this.run = async function({api, output, inputs=[]}){
+    console.log(api)
     //default params
     const data = {
       // Append to existing layer
@@ -119,13 +120,18 @@ function Service() {
         ]
       }
     };
+    let url = this.urls[`isochrone_${api}`];
     inputs.forEach(({name, value}) =>{
       if (name === 'range') value = value.split(',').map(rangevalue => 1 * rangevalue);
       else if (name === 'interval'){
         if (data.ors.range.length > 1){
           value = null
         } else value = 1*value;
-      } else if (name === 'color') value = colorHEXToRGB(value);
+      } else if (name === 'color') {
+        value = colorHEXToRGB(value);
+      } else if (name === 'from_layer'){
+        url = `${url}${value}`;
+      }
       if (data[name] !== undefined){
         data[name] = value;
       } else if (data.ors[name] !== undefined){
@@ -134,7 +140,7 @@ function Service() {
     });
     try {
       const response = await XHR.post({
-        url: this.urls[`isochrone_${api}`],
+        url,
         data: JSON.stringify(data),
         contentType: "application/json"
       });

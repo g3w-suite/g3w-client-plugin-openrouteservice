@@ -203,7 +203,7 @@ export default {
       ],
       from_layer: [
         {
-          name: "form_layer",
+          name: "from_layer",
           type: "varchar",
           label: "Layer",
           dropdownParent: false,
