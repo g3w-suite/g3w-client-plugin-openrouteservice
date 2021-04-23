@@ -17,30 +17,35 @@ function Service() {
     // project id for api call url
     const projectId = this.config.gid.split(":")[1];
     this.initializeUrls(projectId);
-    // get current poinMulpipoint layer from project
-    const pointMulipointsLayers = ProjectsRegistry.getCurrentProject().state.layers
-      .filter(layer => layer.geometrytype === "Point" || layer.geometrytype === "MultiPoint").map(layer => ({
-      key: layer.name,
-      value: layer.id
-    }));
-
-    if (pointMulipointsLayers.length) {
-      APP.form.inputs.from_layer[0].input.options.values = pointMulipointsLayers;
-      APP.form.inputs.from_layer[0].value = pointMulipointsLayers[0].value;
-    }
+    const project = ProjectsRegistry.getCurrentProject();
     // useful for task id url call
     this.taskId = null;
     Object.keys(this.config).forEach(key =>{
       if (key === 'isochrones'){
         const formProfileInput = APP.form[key][1];
         const outputLayer = APP.form.outputs.existinglayer[0];
-        this.config[key].compatible.forEach(value =>{
-          const findLayer = ProjectsRegistry.getCurrentProject().state.layers.find(layer => layer.id === value);
+        /**
+         * fill compatible layers
+         */
+        this.config[key].compatible && this.config[key].compatible.forEach(({layer_id, qgis_layer_id}) =>{
+          const findLayer = project.state.layers.find(layer => layer.id === qgis_layer_id);
           findLayer && outputLayer.input.options.values.push({
             key: findLayer.name,
-            value
+            value: qgis_layer_id
           })
         });
+        /**
+         * Fill point layer input
+         */
+        this.config[key].pointlayers && this.config[key].pointlayers.forEach(({layer_id, qgis_layer_id}, index) => {
+          const keyValue = {
+            key: project.getLayerById(qgis_layer_id).getName(),
+            value: layer_id
+          };
+          APP.form.inputs.from_layer[0].input.options.values.push(keyValue);
+          if (index === 0) APP.form.inputs.from_layer[0].value = keyValue.value;
+        });
+
         Object.keys(this.config[key].profiles).forEach(keyProfile =>{
           formProfileInput.value = formProfileInput.value === null ? keyProfile : formProfileInput.value;
           formProfileInput.input.options.values.push({
@@ -61,6 +66,7 @@ function Service() {
     });
 
     this.state = {
+      loading: false,
       form: null
     };
     
@@ -91,8 +97,22 @@ function Service() {
     this.openFormPanel.show()
   };
 
+  this.handleTask = function(task_id, response){
+    const {result, status } = response;
+    if (status === 'complete') {
+
+    } else console.log(status)
+  };
+
+  this.afterRun = function(qgis_layer_id){
+    if (qgis_layer_id){
+      const layer = CatalogLayersStoresRegistry.getLayerById(qgis_layer_id);
+      layer && layer.change();
+    } else ApplicationService.reloadCurrentProject()
+  };
+
   this.run = async function({api, output, inputs=[]}){
-    console.log(api)
+    this.state.loading = true;
     //default params
     const data = {
       // Append to existing layer
@@ -139,24 +159,48 @@ function Service() {
       } 
     });
     try {
-      const response = await XHR.post({
-        url,
+      const params = {
         data: JSON.stringify(data),
         contentType: "application/json"
-      });
-      if (response.result){
-        if (data.qgis_layer_id) {
-          const layer = CatalogLayersStoresRegistry.getLayerById(data.qgis_layer_id);
-          layer && layer.change();
-        } else ApplicationService.reloadCurrentProject()
+      };
+      if (api !== 'from_layer') {
+        const response = await XHR.post({
+          url,
+         ...params
+        });
+        if (response.result){
+          this.afterRun(data.qgis_layer_id);
+        } else {
+          GUI.showUserMessage({
+            type: 'alert',
+            message: response.error,
+            textMessage: true
+          })
+        }
+        this.state.loading = false;
       } else {
-        GUI.showUserMessage({
-          type: 'alert',
-          message: response.error,
-          textMessage: true
+        const listener = ({task_id, response}) => {
+          const {result, status} = response;
+          if (status === 'complete') {
+            this.afterRun(data.qgis_layer_id);
+            TaskService.stopTask({
+              task_id
+            });
+            this.state.loading = false;
+          }
+          else console.log(task_id, response)
+        };
+        await TaskService.runTask({
+          url,
+          taskUrl: this.urls.task,
+          params,
+          method: 'POST',
+          listener
         })
       }
+
     } catch(error){
+      this.state.loading = false;
       const message = error.responseJSON ? error.responseJSON.error : 'server_error';
       GUI.showUserMessage({
         type: 'alert',

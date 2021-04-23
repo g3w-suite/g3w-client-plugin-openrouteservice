@@ -49,8 +49,8 @@
                 </form>
             </div>
             <div class="openrouteservice-plugin-footer">
-                <bar-loader :loading="loading"></bar-loader>
-                <button style="font-weight: bold" class="btn btn-block skin-background-color" v-disabled="!validForm" @click.stop="run">Run</button>
+                <bar-loader :loading="state.loading"></bar-loader>
+                <button style="font-weight: bold" class="btn btn-block skin-background-color" v-disabled="!validForm || state.loading" @click.stop="run">Run</button>
             </div>
         </div>
     </div>
@@ -68,7 +68,6 @@
         name: 'OpenRouteServiceForm',
         data(){
             return {
-                loading: false,
                 validForm: false,
                 state: this.$options.service.state,
                 currentinputs: 'mapcoordinates', //mapcoordinates, from_layer
@@ -132,14 +131,14 @@
                  ...this.outputs[this.currentoutputs]].reduce((accumulator, current) => accumulator && (current.validate.valid === undefined || current.validate.valid), true)
           },
           async run(){
-              this.loading = true;
+
               GUI.disableSideBar(true);
               await this.$options.service.run({
                   api: this.currentinputs,
                   output: this.currentoutputs,
                   inputs: [...this.isochrones, ...this.inputs[this.currentinputs], ...this.outputs[this.currentoutputs]]
               });
-              this.loading = false;
+
               GUI.disableSideBar(false)
           }
         },
