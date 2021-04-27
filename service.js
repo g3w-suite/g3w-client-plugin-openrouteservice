@@ -67,9 +67,12 @@ function Service() {
 
     this.state = {
       loading: false,
-      form: null
+      form: null,
+      task: {
+        progress: null
+      }
     };
-    
+
     this.emit('ready');
   };
 
@@ -95,13 +98,6 @@ function Service() {
     });
     GUI.closeContent();
     this.openFormPanel.show()
-  };
-
-  this.handleTask = function(task_id, response){
-    const {result, status } = response;
-    if (status === 'complete') {
-
-    } else console.log(status)
   };
 
   this.afterRun = function(qgis_layer_id){
@@ -179,22 +175,37 @@ function Service() {
         }
         this.state.loading = false;
       } else {
-        const listener = ({task_id, response}) => {
-          const {result, status} = response;
-          if (status === 'complete') {
-            this.afterRun(data.qgis_layer_id);
-            TaskService.stopTask({
-              task_id
-            });
+        const listener = ({task_id, timeout, response}) => {
+          if (timeout){
             this.state.loading = false;
+            this.state.task.progress = null;
+            GUI.showUserMessage({
+              type: 'warning',
+              message: 'Timeout',
+              autoclose: true
+            })
+          } else {
+            const {result, progress, task_result, status} = response;
+            if (status === 'complete') {
+              this.afterRun(data.qgis_layer_id);
+              TaskService.stopTask({
+                task_id
+              });
+              this.state.loading = false;
+              this.state.task.progress = null;
+            }
+            else if (status === 'executing') {
+              this.state.task.progress = progress;
+            }
           }
-          else console.log(task_id, response)
         };
+
         await TaskService.runTask({
           url,
           taskUrl: this.urls.task,
           params,
           method: 'POST',
+          timeout: 60000,
           listener
         })
       }

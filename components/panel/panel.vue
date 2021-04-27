@@ -49,7 +49,7 @@
                 </form>
             </div>
             <div class="openrouteservice-plugin-footer">
-                <bar-loader :loading="state.loading"></bar-loader>
+                <progressbar :progress="state.task.progress"></progressbar>
                 <button style="font-weight: bold" class="btn btn-block skin-background-color" v-disabled="!validForm || state.loading" @click.stop="run">Run</button>
             </div>
         </div>
