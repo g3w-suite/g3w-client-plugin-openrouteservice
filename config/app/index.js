@@ -83,19 +83,22 @@ export default {
         name: "range",
         type: "varchar",
         label: "Range",
-        info: "[MIN: 0 - MAX: 3600]",
+        info: "[MIN: 1 - MAX: 3600]",
         editable: true,
         validate: {
           required: true,
-          valid: false
+          valid: false,
+          message: null
         },
         pk: false,
         default: "",
         input: {
           type: "text",
-          options: {}
+          options: {
+            min: 1
+          }
         },
-        value: '0'
+        value: '1'
       },
       {
         name: "interval",
