@@ -175,37 +175,60 @@ function Service() {
         }
         this.state.loading = false;
       } else {
+        let timeoutprogressintervall;
         const listener = ({task_id, timeout, response}) => {
-          if (timeout){
+          const {result, progress, task_result, status, exception} = response;
+          if (status === 'complete') {
+            this.afterRun(data.qgis_layer_id);
+            TaskService.stopTask({
+              task_id
+            });
             this.state.loading = false;
             this.state.task.progress = null;
+            timeoutprogressintervall = null;
+          }
+          else if (status === 'executing') {
+            if (this.state.task.progress === null || this.state.task.progress === undefined){
+              timeoutprogressintervall = Date.now();
+            } else {
+              if (progress > this.state.task.progress) timeoutprogressintervall = Date.now();
+              else {
+                if ((Date.now() - timeoutprogressintervall) > 600000){
+                  this.state.loading = false;
+                  this.state.task.progress = null;
+                  TaskService.stopTask({
+                    task_id
+                  });
+                  GUI.showUserMessage({
+                    type: 'warning',
+                    message: 'Timeout',
+                    autoclose: true
+                  });
+                  timeoutprogressintervall = null;
+                }
+              }
+            }
+            this.state.task.progress = progress;
+          }
+          else if (status === 'error') {
+            this.state.loading = false;
+            this.state.task.progress = null;
+            timeoutprogressintervall = null;
+            TaskService.stopTask({
+              task_id
+            });
             GUI.showUserMessage({
-              type: 'warning',
-              message: 'Timeout',
-              autoclose: true
-            })
-          } else {
-            const {result, progress, task_result, status} = response;
-            if (status === 'complete') {
-              this.afterRun(data.qgis_layer_id);
-              TaskService.stopTask({
-                task_id
-              });
-              this.state.loading = false;
-              this.state.task.progress = null;
-            }
-            else if (status === 'executing') {
-              this.state.task.progress = progress;
-            }
+              type: 'alert',
+              message: exception,
+              textMessage: true
+            });
           }
         };
-
         await TaskService.runTask({
           url,
           taskUrl: this.urls.task,
           params,
           method: 'POST',
-          timeout: 60000,
           listener
         })
       }

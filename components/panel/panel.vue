@@ -117,8 +117,9 @@
                         input.validate.valid = input.value > 0;
                         intervalinput.editable = 1*input.value > 0;
                         if (intervalinput.editable){
-                            intervalinput.value = intervalinput.input.options.min = Math.round(1*input.value / 10);
+                            intervalinput.input.options.min = Math.round(1*input.value / 10);
                             intervalinput.input.options.max = 1*input.value;
+                            intervalinput.value = intervalinput.input.options.max;
                         }
                     }
                 }  else if (input.name === 'range_type'){
