@@ -210,7 +210,8 @@ function Service() {
             }
             this.state.task.progress = progress;
           }
-          else if (status === 'error') {
+          else if (status === 'error' || status == '404' || status== '500') {
+            const statusError = status === 'error';
             this.state.loading = false;
             this.state.task.progress = null;
             timeoutprogressintervall = null;
@@ -219,8 +220,8 @@ function Service() {
             });
             GUI.showUserMessage({
               type: 'alert',
-              message: exception,
-              textMessage: true
+              message: statusError ? exception : 'server_error',
+              textMessage: statusError
             });
           }
         };
