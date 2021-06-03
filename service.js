@@ -177,7 +177,7 @@ function Service() {
       } else {
         let timeoutprogressintervall;
         const listener = ({task_id, timeout, response}) => {
-          const {result, progress, task_result, status, exception} = response;
+          const {result, progress, task_result, status} = response;
           if (status === 'complete') {
             this.afterRun(data.qgis_layer_id);
             TaskService.stopTask({
@@ -209,8 +209,8 @@ function Service() {
               }
             }
             this.state.task.progress = progress;
-          }
-          else if (status === 'error' || status == '404' || status== '500') {
+          } else if ( status == '500') {
+            const {status, exception} = response.responseJSON || {};
             const statusError = status === 'error';
             this.state.loading = false;
             this.state.task.progress = null;
