@@ -138,16 +138,13 @@ function Service() {
     };
     let url = this.urls[`isochrone_${api}`];
     inputs.forEach(({name, value}) =>{
-      if (name === 'range') value = value.split(',').map(rangevalue => 1 * rangevalue);
+      if (name === 'range') value = value.split(',').map(rangevalue => (data.ors.range_type === "time" ? 60 : 1) * rangevalue);
       else if (name === 'interval'){
-        if (data.ors.range.length > 1){
-          value = null
-        } else value = 1*value;
-      } else if (name === 'color') {
-        value = colorHEXToRGB(value);
-      } else if (name === 'from_layer'){
-        url = `${url}${value}`;
+        if (data.ors.range.length > 1) value = null;
+        else value = 1*value;
       }
+      else if (name === 'color') value = colorHEXToRGB(value);
+      else if (name === 'from_layer') url = `${url}${value}`;
       if (data[name] !== undefined){
         data[name] = value;
       } else if (data.ors[name] !== undefined){

@@ -2,7 +2,7 @@
     <div class="g3w-openservice-plugin-panel form-group" style="height: 100%;">
         <div class="form-group" style="display: flex; flex-direction: column; height: 100%">
             <div id="openrouteservice-plugin-form-isochrones" class="openrouteservice-form">
-                <h5 class="openrouteservice-form-header skin-color">ISOCHRONE</h5>
+                <h5 class="openrouteservice-form-header skin-color">TRAVEL TIME (ISOCHRONE)</h5>
                 <form class="openrouteservice-form-inputs">
                     <div class="row" v-for="input in isochrones" :key="input.name">
                         <component @changeinput="validate" :is="`${input.input.type}_input`" :state="input" ></component>
@@ -60,7 +60,7 @@
     const Inputs =  g3wsdk.gui.vue.Inputs.InputsComponents;
     const GUI = g3wsdk.gui.GUI;
     const MAX_RANGE = {
-        time: 3600,
+        time: 60,
         distance: 100000
     };
 
@@ -134,7 +134,6 @@
                  ...this.outputs[this.currentoutputs]].reduce((accumulator, current) => accumulator && (current.validate.valid === undefined || current.validate.valid), true)
           },
           async run(){
-
               GUI.disableSideBar(true);
               await this.$options.service.run({
                   api: this.currentinputs,
