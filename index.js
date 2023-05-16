@@ -3,19 +3,17 @@ const {base, inherit} = g3wsdk.core.utils;
 const Plugin = g3wsdk.core.plugin.Plugin;
 const ComponentsFactory = g3wsdk.gui.ComponentsFactory;
 const Service = require('./service');
-const addI18nPlugin = g3wsdk.core.i18n.addI18nPlugin;
 const GUI = g3wsdk.gui.GUI;
+let SiderBarComponent;
+
 
 const _Plugin = function() {
-  base(this);
-  let SiderBarComponent;
-  this.name = 'openrouteservice';
+  base(this, {
+    name: 'openrouteservice',
+    service: Service,
+    i18n: true,
+  });
   this.init = function() {
-    addI18nPlugin({
-      name: this.name,
-      config: pluginConfig.i18n
-    });
-    this.setService(Service);
     this.config = this.getConfig();
     this.service.once('ready', () => {
       if (this.registerPlugin(this.config.gid)) {
@@ -64,6 +62,5 @@ const _Plugin = function() {
 
 inherit(_Plugin, Plugin);
 
-(function(plugin){
-  plugin.init();
-})(new _Plugin);
+new _Plugin;
+
