@@ -10,6 +10,7 @@ export default {
   form: {
     isochrones: [
       {
+        visible: true,
         name: "name",
         type: "varchar",
         label: "Name",
@@ -27,6 +28,7 @@ export default {
         value: null
       },
       {
+        visible: true,
         name: "profile",
         type: "varchar",
         label: "Profile",
@@ -40,7 +42,7 @@ export default {
         pk: false,
         default: "",
         input: {
-          type: "select",
+          type: "text",
           options: {
             values: [],
             default: null
@@ -49,6 +51,7 @@ export default {
         value: null
       },
       {
+        visible: true,
         name: "range_type",
         type: "varchar",
         label: "Mode",
@@ -80,6 +83,7 @@ export default {
         value: "time"
       },
       {
+        visible: true,
         name: "range",
         type: "varchar",
         label: "Range",
@@ -101,6 +105,7 @@ export default {
         value: '1'
       },
       {
+        visible: true,
         name: "interval",
         type: "float",
         label: "Interval",
@@ -119,6 +124,7 @@ export default {
         value: 0
       },
       {
+        visible: true,
         name: "stroke_width",
         type: "float",
         label: "Pen width",
@@ -139,6 +145,7 @@ export default {
         value: 0.26
       },
       {
+        visible: true,
         name: "color",
         type: "varchar",
         label: "Color",
@@ -153,6 +160,7 @@ export default {
         value: '#FF0000'
       },
       {
+        visible: true,
         name: "transparency",
         type: "float",
         label: "Transparency",
@@ -177,6 +185,7 @@ export default {
     inputs: {
       mapcoordinates: [
         {
+          visible: true,
           name: 'locations',
           type: "float",
           labels: {
@@ -206,6 +215,7 @@ export default {
       ],
       from_layer: [
         {
+          visible: true,
           name: "from_layer",
           type: "varchar",
           label: "Layer",
@@ -232,6 +242,7 @@ export default {
     outputs: {
       newlayer: [
         {
+          visible: true,
           name: "new_layer_name",
           type: "varchar",
           label: "Layer name",
@@ -249,6 +260,7 @@ export default {
           value: null
         },
         {
+          visible: true,
           name: "connection_id",
           type: "varchar",
           label: "Datasource",
@@ -285,6 +297,7 @@ export default {
       ],
       existinglayer: [
         {
+          visible: true,
           name: "qgis_layer_id",
           type: "varchar",
           label: "Existing Layer",
