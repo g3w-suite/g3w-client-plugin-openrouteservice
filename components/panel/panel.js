@@ -1,11 +1,11 @@
 import OpenRouteComponent from './panel.vue';
-const { base, inherit } =  g3wsdk.core.utils;
-const Panel = g3wsdk.gui.Panel;
+const {base, inherit} =  g3wsdk.core.utils;
+const {Panel} = g3wsdk.gui;
 
 function OpenRouteServicePanel(options={}) {
   options.title = "OPENROUTESERVICE";
   base(this, options);
-  const { service } = options;
+  const {service} = options;
   this.setService(service);
   const internalPanel = Vue.extend(OpenRouteComponent);
   this.setInternalPanel(new internalPanel({
