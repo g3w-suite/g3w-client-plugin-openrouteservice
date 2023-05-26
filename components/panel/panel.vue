@@ -68,7 +68,6 @@
   export default {
     name: 'OpenRouteServiceForm',
     data(){
-      console.log(...Inputs)
       return {
         validForm: false,
         state: this.$options.service.state,

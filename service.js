@@ -1,12 +1,14 @@
 import {APP} from './config/index';
-const { base, inherit, XHR , colorHEXToRGB} =  g3wsdk.core.utils;
-const ApplicationService = g3wsdk.core.ApplicationService;
-const CatalogLayersStoresRegistry = g3wsdk.core.catalog.CatalogLayersStoresRegistry;
-const TaskService = g3wsdk.core.task.TaskService;
+const { base, inherit, XHR , colorHEXToRGB} = g3wsdk.core.utils;
+const {ApplicationService} = g3wsdk.core;
+const {CatalogLayersStoresRegistry} = g3wsdk.core.catalog;
+const {TaskService} = g3wsdk.core.task;
+const {ProjectsRegistry} = g3wsdk.core.project;
+const {PluginService} = g3wsdk.core.plugin;
+const {GUI} = g3wsdk.gui;
+
 const OpenRoutePanel = require('./components/panel/panel');
-const ProjectsRegistry = g3wsdk.core.project.ProjectsRegistry;
-const PluginService = g3wsdk.core.plugin.PluginService;
-const GUI = g3wsdk.gui.GUI;
+
 
 function Service() {
   base(this);
