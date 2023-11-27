@@ -1,56 +1,123 @@
 <template>
-  <div class="g3w-openservice-plugin-panel form-group" style="height: 100%;">
-    <div class="form-group" style="display: flex; flex-direction: column; height: 100%">
-      <div id="openrouteservice-plugin-form-isochrones" class="openrouteservice-form">
+  <div
+    class="g3w-openservice-plugin-panel form-group"
+    style="height: 100%;"
+  >
+    <div
+      class="form-group"
+      style="display: flex; flex-direction: column; height: 100%"
+    >
+      <div
+        id="openrouteservice-plugin-form-isochrones"
+        class="openrouteservice-form"
+      >
         <h5 class="openrouteservice-form-header skin-color">TRAVEL TIME (ISOCHRONE)</h5>
         <form class="openrouteservice-form-inputs">
-          <div class="row" v-for="input in isochrones" :key="input.name">
-            <component @changeinput="validate" :is="`${input.input.type}_input`" :state="input"/>
+          <div
+            v-for="input in isochrones"
+            :key="input.name"
+            class="row"
+          >
+            <component
+              @changeinput="validate"
+              :is="`${input.input.type}_input`"
+              :state="input"/>
             <span style="height: 20px; width: 100%; "></span>
           </div>
         </form>
       </div>
-      <div id="openrouteservice-plugin-form-inputs" class="openrouteservice-form">
+      <div
+        id="openrouteservice-plugin-form-inputs"
+        class="openrouteservice-form"
+      >
         <h5 class="openrouteservice-form-header skin-color">INPUT</h5>
         <form class="openrouteservice-form-inputs">
           <div class="openrouteservice-radio-buttons">
             <div>
-              <input class="magic-radio" type="radio" name="radio" value="mapcoordinates" id="mapcoordinates" v-model="currentinputs">
+              <input
+                id="mapcoordinates"
+                class="magic-radio"
+                type="radio"
+                name="radio"
+                value="mapcoordinates"
+                v-model="currentinputs">
               <label for="mapcoordinates">Map Coordinates (EPSG:4326)</label>
             </div>
             <div>
-              <input class="magic-radio" type="radio" name="radio" value="from_layer" id="pointlayer" :disabled="inputs.from_layer[0].input.options.values.length === 0" v-model="currentinputs">
+              <input
+                id="pointlayer"
+                class="magic-radio"
+                type="radio"
+                name="radio"
+                value="from_layer"
+                :disabled="inputs.from_layer[0].input.options.values.length === 0"
+                v-model="currentinputs">
               <label for="pointlayer">Existing Layer Point</label>
             </div>
           </div>
-          <div class="row" v-for="input in inputs[this.currentinputs]" :key="input.name">
-            <component @changeinput="validate" :is="`${input.input.type}_input`" :state="input"/>
+          <div
+            v-for="input in inputs[this.currentinputs]"
+            :key="input.name"
+            class="row"
+          >
+            <component
+              @changeinput="validate"
+              :is="`${input.input.type}_input`"
+              :state="input"/>
             <span style="height: 20px; width: 100%; "></span>
           </div>
         </form>
       </div>
-      <div id="openrouteservice-plugin-form-outputs" class="openrouteservice-form">
+      <div
+        id="openrouteservice-plugin-form-outputs"
+        class="openrouteservice-form"
+      >
         <h5 class="openrouteservice-form-header skin-color">OUTPUT</h5>
         <form class="openrouteservice-form-inputs">
           <div class="openrouteservice-radio-buttons">
             <div>
-              <input class="magic-radio" type="radio" name="radio" id="newlayer" value="newlayer" v-model="currentoutputs">
-              <label for="newlayer">New Layer</label>
+              <input
+                id="newlayer"
+                class="magic-radio"
+                type="radio"
+                name="radio"
+                value="newlayer"
+                v-model="currentoutputs"
+              >
+                <label for="newlayer">New Layer</label>
             </div>
             <div>
-              <input class="magic-radio" type="radio" name="radio" value="existinglayer" :disabled="this.outputs.existinglayer[0].input.options.values.length === 0" id="existinglayer" v-model="currentoutputs">
+              <input
+                id="existinglayer"
+                class="magic-radio"
+                type="radio"
+                name="radio"
+                value="existinglayer"
+                :disabled="this.outputs.existinglayer[0].input.options.values.length === 0"
+                v-model="currentoutputs">
               <label for="existinglayer">Existing Layer</label>
             </div>
           </div>
-          <div class="row" v-for="input in outputs[this.currentoutputs]" :key="input.name">
-            <component @changeinput="validate" :is="`${input.input.type}_input`" :state="input"/>
+          <div
+            v-for="input in outputs[this.currentoutputs]"
+            :key="input.name"
+            class="row"
+          >
+            <component
+              @changeinput="validate"
+              :is="`${input.input.type}_input`"
+              :state="input"/>
             <span style="height: 20px; width: 100%; "></span>
           </div>
         </form>
       </div>
       <div class="openrouteservice-plugin-footer">
         <progressbar :progress="state.task.progress"/>
-        <button style="font-weight: bold" class="btn btn-block skin-background-color" v-disabled="!validForm || state.loading" @click.stop="run">Run</button>
+        <button
+          style="font-weight: bold"
+          class="btn btn-block skin-background-color"
+          v-disabled="!validForm || state.loading"
+          @click.stop="run">Run</button>
       </div>
     </div>
   </div>
@@ -61,13 +128,13 @@
   const {GUI} = g3wsdk.gui;
 
   const MAX_RANGE = {
-      time: 60,
-      distance: 100000
+    time: 60,
+    distance: 100000
   };
 
   export default {
     name: 'OpenRouteServiceForm',
-    data(){
+    data() {
       return {
         validForm: false,
         state: this.$options.service.state,
@@ -79,22 +146,22 @@
       ...Inputs
     },
     computed: {
-      form(){
+      form() {
         return this.state.form;
       },
-      isochrones(){
-        return this.state.form.isochrones
+      isochrones() {
+        return this.state.form.isochrones;
       },
-      inputs(){
-        return this.state.form.inputs
+      inputs() {
+        return this.state.form.inputs;
       },
-      outputs(){
-        return this.state.form.outputs
+      outputs() {
+        return this.state.form.outputs;
       }
     },
     methods: {
-      validate(input){
-        if (input){
+      validate(input) {
+        if (input) {
           if (input.name === 'range') {
             const range_typeinput = this.isochrones[2];
             const intervalinput = this.isochrones[4];
@@ -122,7 +189,7 @@
                 intervalinput.value = intervalinput.input.options.max;
               }
             }
-          }  else if (input.name === 'range_type'){
+          } else if (input.name === 'range_type'){
             const rangeinput = this.isochrones[3];
             rangeinput.value = 1*rangeinput.value > MAX_RANGE[input.value] ? `${MAX_RANGE[input.value]}` : rangeinput.value;
             rangeinput.info = `[MIN: 1 - MAX: ${MAX_RANGE[input.value]}]`;
@@ -133,7 +200,7 @@
           ...this.inputs[this.currentinputs],
           ...this.outputs[this.currentoutputs]].reduce((accumulator, current) => accumulator && (current.validate.valid === undefined || current.validate.valid), true)
         },
-      async run(){
+      async run() {
         GUI.disableSideBar(true);
         await this.$options.service.run({
           api: this.currentinputs,
@@ -145,45 +212,47 @@
       }
     },
     watch: {
-      currentinputs(value){
-        this.inputs[value].forEach(input => {
-          if (input.input.type === 'select' && input.value === null){
-            input.value = input.input.options.values[0].value;
-          }
-        });
+      currentinputs(value) {
+        this.inputs[value]
+          .forEach(input => {
+            if (input.input.type === 'select' && input.value === null){
+              input.value = input.input.options.values[0].value;
+            }
+          });
         this.validate()
       },
-      currentoutputs(value){
-        this.outputs[value].forEach(input => {
-          if (input.input.type === 'select' && input.value === null){
-            input.value = input.input.options.values[0].value;
-          }
-        });
-        this.validate()
+      currentoutputs(value) {
+        this.outputs[value]
+          .forEach(input => {
+            if (input.input.type === 'select' && input.value === null){
+              input.value = input.input.options.values[0].value;
+            }
+          });
+        this.validate();
       }
     },
-    async mounted(){},
+    async mounted() {},
   };
 </script>
 
 <style scoped>
-    .openrouteservice-plugin-footer {
-        margin-top: auto;
-        font-weight: bold;
-    }
-    .row {
-        padding: 2px;
-    }
-    .openrouteservice-radio-buttons {
-        display: flex;
-        justify-content: space-between;
-        margin:5px 0 5px 0;
-    }
-    .openrouteservice-form-header {
-        font-weight: bold;
-        padding-bottom: 3px;
-        margin: 0 0 2px 0;
-        width: 100%;
-        border-bottom: 1px solid #FFFFFF;
-    }
+  .openrouteservice-plugin-footer {
+    margin-top: auto;
+    font-weight: bold;
+  }
+  .row {
+    padding: 2px;
+  }
+  .openrouteservice-radio-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin:5px 0 5px 0;
+  }
+  .openrouteservice-form-header {
+    font-weight: bold;
+    padding-bottom: 3px;
+    margin: 0 0 2px 0;
+    width: 100%;
+    border-bottom: 1px solid #FFFFFF;
+  }
 </style>
