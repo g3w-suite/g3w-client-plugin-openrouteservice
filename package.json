@@ -1,11 +1,11 @@
 {
   "name": "openrouteservice",
-  "version": "3.6.0",
+  "version": "3.7.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "watch": "../../../node_modules/.bin/gulp watch",
-    "build": "../../../node_modules/.bin/gulp default"
+    "watch": "gulp watch",
+    "build": "gulp default"
   },
   "keywords": [],
   "author": "",
