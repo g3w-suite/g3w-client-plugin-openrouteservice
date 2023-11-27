@@ -1,20 +1,24 @@
 import {APP} from './config/index';
-const { base, inherit, XHR , colorHEXToRGB} = g3wsdk.core.utils;
-const {ApplicationService} = g3wsdk.core;
-const {CatalogLayersStoresRegistry} = g3wsdk.core.catalog;
-const {TaskService} = g3wsdk.core.task;
-const {ProjectsRegistry} = g3wsdk.core.project;
-const {PluginService} = g3wsdk.core.plugin;
-const {GUI} = g3wsdk.gui;
+const {
+  base,
+  inherit,
+  XHR,
+  colorHEXToRGB
+}                                     = g3wsdk.core.utils;
+const {ApplicationService}            = g3wsdk.core;
+const {CatalogLayersStoresRegistry}   = g3wsdk.core.catalog;
+const {TaskService}                   = g3wsdk.core.task;
+const {ProjectsRegistry}              = g3wsdk.core.project;
+const {PluginService}                 = g3wsdk.core.plugin;
+const {GUI}                           = g3wsdk.gui;
 
 const OpenRoutePanel = require('./components/panel/panel');
-
 
 function Service() {
   base(this);
   this.urls = APP.api.urls;
   // init function
-  this.init = function(config={}){
+  this.init = function(config={}) {
     this.config = config;
     // project id for api call url
     const projectId = this.config.gid.split(":")[1];
@@ -22,48 +26,66 @@ function Service() {
     const project = ProjectsRegistry.getCurrentProject();
     // useful for task id url call
     this.taskId = null;
-    Object.keys(this.config).forEach(key =>{
-      if (key === 'isochrones'){
+    Object
+      .keys(this.config)
+      .forEach(key => {
+      if (key === 'isochrones') {
         const formProfileInput = APP.form[key][1];
         const outputLayer = APP.form.outputs.existinglayer[0];
         /**
          * fill compatible layers
          */
-        this.config[key].compatible && this.config[key].compatible.forEach(({layer_id, qgis_layer_id}) =>{
-          const findLayer = project.state.layers.find(layer => layer.id === qgis_layer_id);
-          findLayer && outputLayer.input.options.values.push({
-            key: findLayer.name,
-            value: qgis_layer_id
-          })
-        });
+        if (this.config[key].compatible) {
+          this
+            .config[key]
+            .compatible
+            .forEach(({layer_id, qgis_layer_id}) => {
+              const findLayer = project.state.layers.find(layer => layer.id === qgis_layer_id);
+              findLayer && outputLayer.input.options.values.push({
+                key: findLayer.name,
+                value: qgis_layer_id
+              })
+            });
+        }
         /**
          * Fill point layer input
          */
-        this.config[key].pointlayers && this.config[key].pointlayers.forEach(({layer_id, qgis_layer_id}, index) => {
-          const keyValue = {
-            key: project.getLayerById(qgis_layer_id).getName(),
-            value: layer_id
-          };
-          APP.form.inputs.from_layer[0].input.options.values.push(keyValue);
-          if (index === 0) APP.form.inputs.from_layer[0].value = keyValue.value;
-        });
+        if (this.config[key].pointlayers) {
+          this
+            .config[key]
+            .pointlayers
+            .forEach(({layer_id, qgis_layer_id}, index) => {
+              const keyValue = {
+                key: project.getLayerById(qgis_layer_id).getName(),
+                value: layer_id
+              };
+              APP.form.inputs.from_layer[0].input.options.values.push(keyValue);
+              if (index === 0) {
+                APP.form.inputs.from_layer[0].value = keyValue.value;
+              }
+            });
+        }
 
-        Object.keys(this.config[key].profiles).forEach(keyProfile =>{
-          formProfileInput.value = formProfileInput.value === null ? keyProfile : formProfileInput.value;
-          formProfileInput.input.options.values.push({
-            key: this.config[key].profiles[keyProfile].name,
-            value: keyProfile
+        Object
+          .keys(this.config[key].profiles)
+          .forEach(keyProfile => {
+            formProfileInput.value = formProfileInput.value === null ? keyProfile : formProfileInput.value;
+            formProfileInput.input.options.values.push({
+              key: this.config[key].profiles[keyProfile].name,
+              value: keyProfile
+            })
           })
-        })
-      } else if (key === 'connections'){
+      } else if (key === 'connections') {
         const connections = this.config[key] || [];
-        connections.reverse().forEach(connection => {
-          APP.form.outputs.newlayer[1].input.options.values.unshift({
-            key: connection.name,
-            value: connection.id
-          });
-          APP.form.outputs.newlayer[1].value = connection.id
-        })
+        connections
+          .reverse()
+          .forEach(connection => {
+            APP.form.outputs.newlayer[1].input.options.values.unshift({
+              key: connection.name,
+              value: connection.id
+            });
+            APP.form.outputs.newlayer[1].value = connection.id
+          })
       }
     });
 
@@ -79,7 +101,7 @@ function Service() {
   };
 
   /**
-   * Used to create a init start form 
+   * Used to create an init start form
    */
   this.createInitStateForm = function(){
     const form = JSON.parse(JSON.stringify(APP.form));
@@ -87,13 +109,13 @@ function Service() {
   };
 
   //set projectid to urls api
-  this.initializeUrls = function(projectId){
-    Object.keys(this.urls).forEach(key =>{
+  this.initializeUrls = function(projectId) {
+    Object.keys(this.urls).forEach(key => {
       this.urls[key] = `${this.urls[key]}/${projectId}/`
     });
   };
 
-  this.openForm = function(bool=false){
+  this.openForm = function(bool=false) {
     this.createInitStateForm();
     this.openFormPanel = new OpenRoutePanel({
       service: this
@@ -102,14 +124,14 @@ function Service() {
     this.openFormPanel.show()
   };
 
-  this.afterRun = function(qgis_layer_id){
+  this.afterRun = function(qgis_layer_id) {
     if (qgis_layer_id){
       const layer = CatalogLayersStoresRegistry.getLayerById(qgis_layer_id);
       layer && layer.change();
     } else ApplicationService.reloadCurrentProject()
   };
 
-  this.run = async function({api, output, inputs=[]}){
+  this.run = async function({api, output, inputs=[]}) {
     this.state.loading = true;
     //default params
     const data = {
@@ -139,20 +161,26 @@ function Service() {
       }
     };
     let url = this.urls[`isochrone_${api}`];
-    inputs.forEach(({name, value}) =>{
-      if (name === 'range') value = value.split(',').map(rangevalue => (data.ors.range_type === "time" ? 60 : 1) * rangevalue);
-      else if (name === 'interval'){
+    inputs.forEach(({name, value}) => {
+      if (name === 'range') {
+        value = value.split(',').map(rangevalue => (data.ors.range_type === "time" ? 60 : 1) * rangevalue);
+      } else if (name === 'interval') {
         if (data.ors.range.length > 1) value = null;
-        else value = 1*value;
+        else {
+          value = 1*value;
+        }
+      } else if (name === 'color') {
+        value = colorHEXToRGB(value);
+      } else if (name === 'from_layer') {
+        url = `${url}${value}`;
       }
-      else if (name === 'color') value = colorHEXToRGB(value);
-      else if (name === 'from_layer') url = `${url}${value}`;
-      if (data[name] !== undefined){
+      if (data[name] !== undefined) {
         data[name] = value;
-      } else if (data.ors[name] !== undefined){
+      } else if (data.ors[name] !== undefined) {
         data.ors[name] = value
       } 
     });
+
     try {
       const params = {
         data: JSON.stringify(data),
@@ -163,7 +191,7 @@ function Service() {
           url,
          ...params
         });
-        if (response.result){
+        if (response.result) {
           this.afterRun(data.qgis_layer_id);
         } else {
           GUI.showUserMessage({
@@ -185,19 +213,20 @@ function Service() {
             this.state.loading = false;
             this.state.task.progress = null;
             timeoutprogressintervall = null;
-          }
-          else if (status === 'executing') {
-            if (this.state.task.progress === null || this.state.task.progress === undefined){
+          } else if (status === 'executing') {
+            if (this.state.task.progress === null || this.state.task.progress === undefined) {
               timeoutprogressintervall = Date.now();
             } else {
-              if (progress > this.state.task.progress) timeoutprogressintervall = Date.now();
-              else {
-                if ((Date.now() - timeoutprogressintervall) > 600000){
+              if (progress > this.state.task.progress) {
+                timeoutprogressintervall = Date.now();
+              } else {
+                if ((Date.now() - timeoutprogressintervall) > 600000) {
                   this.state.loading = false;
                   this.state.task.progress = null;
                   TaskService.stopTask({
                     task_id
                   });
+
                   GUI.showUserMessage({
                     type: 'warning',
                     message: 'Timeout',
@@ -233,9 +262,12 @@ function Service() {
         })
       }
 
-    } catch(error){
+    } catch(error) {
       this.state.loading = false;
-      const message = error.responseJSON ? error.responseJSON.error : 'server_error';
+      const message = error.responseJSON ?
+        error.responseJSON.error :
+        'server_error';
+
       GUI.showUserMessage({
         type: 'alert',
         message,
@@ -245,7 +277,7 @@ function Service() {
   };
 
   // clear function when clear when unload plugin
-  this.clear = function(){
+  this.clear = function() {
     this.openFormPanel = null;
   }
 }
