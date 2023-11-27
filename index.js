@@ -1,69 +1,67 @@
 import pluginConfig from './config';
-const {base, inherit} = g3wsdk.core.utils;
-const Plugin = g3wsdk.core.plugin.Plugin;
-const ComponentsFactory = g3wsdk.gui.ComponentsFactory;
+const {
+  base,
+  inherit
+} = g3wsdk.core.utils;
+const {Plugin:BasePlugin} = g3wsdk.core.plugin;
+const {GUI} = g3wsdk.gui;
 const Service = require('./service');
-const addI18nPlugin = g3wsdk.core.i18n.addI18nPlugin;
-const GUI = g3wsdk.gui.GUI;
 
-const _Plugin = function() {
-  base(this);
-  let SiderBarComponent;
-  this.name = 'openrouteservice';
-  this.init = function() {
-    addI18nPlugin({
-      name: this.name,
-      config: pluginConfig.i18n
-    });
-    this.setService(Service);
-    this.config = this.getConfig();
-    this.service.once('ready', () => {
-      if (this.registerPlugin(this.config.gid)) {
-        this.setupGUI();
-        this.setReady(true);
-      }
-    });
-    //inizialize service
-    this.service.init(this.config);
-  };
+const Plugin = function() {
 
-  this.setupGUI = function(){
-    SiderBarComponent = ComponentsFactory.build(
-      {
-        vueComponentObject:{}
+  base(this, {
+    name: 'openrouteservice',
+    i18n: pluginConfig.i18n,
+    service: Service,
+  });
+
+  this.service.once('ready', () => {
+    if (this.registerPlugin(this.config.gid)) {
+      this.setupGUI();
+      this.setReady(true);
+    }
+  });
+
+  //initialize service
+  this.service.init(this.config);
+}
+
+
+inherit(Plugin, BasePlugin);
+
+Plugin.prototype.setupGUI = function () {
+  const SiderBarComponent = this.createSideBarComponent({},
+    {
+      id: this.name,
+      title: 'OPENROUTESERVICE',
+      open: false,
+      collapsible: false,
+      iconConfig: {
+        color: 'purple',
+        icon: 'layers',
       },
-      {
-        id: this.name,
-        title: 'OPENROUTESERVICE',
-        open: false,
-        collapsible: false,
-        iconColor: 'purple',
-        icon: GUI.getFontClass('layers'),
-        mobile: true,
-        events: {
-          open :{
-            when: 'before',
-            cb: bool => {
-              this.service.openForm()
-            }
+      mobile: true,
+      events: {
+        open: {
+          when: 'before',
+          cb: bool => {
+            this.service.openForm()
           }
         }
       }
-    );
+    }
+  );
 
-    GUI.addComponent(SiderBarComponent, 'sidebar', {
-      position: 1
-    });
-  };
+  GUI.addComponent(SiderBarComponent, 'sidebar', {
+    position: 1
+  });
 
-  this.unload = function() {
-    GUI.removeComponent(this.name, 'sidebar');
-    this.service.clear();
-  }
 };
 
-inherit(_Plugin, Plugin);
 
-(function(plugin){
-  plugin.init();
-})(new _Plugin);
+Plugin.prototype.unload = function() {
+  this.service.clear();
+}
+
+
+new Plugin();

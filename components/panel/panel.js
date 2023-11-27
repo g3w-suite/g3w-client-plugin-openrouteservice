@@ -1,5 +1,8 @@
 import OpenRouteComponent from './panel.vue';
-const {base, inherit} =  g3wsdk.core.utils;
+const {
+  base,
+  inherit
+} =  g3wsdk.core.utils;
 const {Panel} = g3wsdk.gui;
 
 function OpenRouteServicePanel(options={}) {
@@ -12,7 +15,8 @@ function OpenRouteServicePanel(options={}) {
     service
   }));
   this.unmount = function() {
-    return base(this, 'unmount').then(() => this.service.clear())
+    return base(this, 'unmount')
+      .then(() => this.service.clear())
   }
 }
 
