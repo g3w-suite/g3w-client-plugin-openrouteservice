@@ -42,7 +42,7 @@ export default {
         pk: false,
         default: "",
         input: {
-          type: "text",
+          type: "select",
           options: {
             values: [],
             default: null
