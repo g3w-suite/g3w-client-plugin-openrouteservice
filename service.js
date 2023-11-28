@@ -75,6 +75,7 @@ function Service() {
                 value: keyProfile
               })
             })
+
         } else if (key === 'connections') {
           const connections = this.config[key] || [];
           connections
@@ -103,16 +104,18 @@ function Service() {
   /**
    * Used to create an init start form
    */
-  this.createInitStateForm = function(){
+  this.createInitStateForm = function() {
     const form = JSON.parse(JSON.stringify(APP.form));
     this.state.form = form;
   };
 
   //set projectid to urls api
   this.initializeUrls = function(projectId) {
-    Object.keys(this.urls).forEach(key => {
-      this.urls[key] = `${this.urls[key]}/${projectId}/`
-    });
+    Object
+      .keys(this.urls)
+      .forEach(key => {
+        this.urls[key] = `${this.urls[key]}/${projectId}/`
+      });
   };
 
   /**
@@ -133,10 +136,12 @@ function Service() {
    * @param qgis_layer_id
    */
   this.afterRun = function(qgis_layer_id) {
-    if (qgis_layer_id){
+    if (qgis_layer_id) {
       const layer = CatalogLayersStoresRegistry.getLayerById(qgis_layer_id);
       layer && layer.change();
-    } else ApplicationService.reloadCurrentProject()
+    } else {
+      ApplicationService.reloadCurrentProject();
+    }
   };
 
   /**
@@ -175,25 +180,28 @@ function Service() {
         ]
       }
     };
+
     let url = this.urls[`isochrone_${api}`];
-    inputs.forEach(({name, value}) => {
-      if (name === 'range') {
-        value = value.split(',').map(rangevalue => (data.ors.range_type === "time" ? 60 : 1) * rangevalue);
-      } else if (name === 'interval') {
-        if (data.ors.range.length > 1) value = null;
-        else {
-          value = 1*value;
+
+    inputs
+      .forEach(({name, value}) => {
+        if (name === 'range') {
+          value = value.split(',').map(rangevalue => (data.ors.range_type === "time" ? 60 : 1) * rangevalue);
+        } else if (name === 'interval') {
+          if (data.ors.range.length > 1) value = null;
+          else {
+            value = 1*value;
+          }
+        } else if (name === 'color') {
+          value = colorHEXToRGB(value);
+        } else if (name === 'from_layer') {
+          url = `${url}${value}`;
         }
-      } else if (name === 'color') {
-        value = colorHEXToRGB(value);
-      } else if (name === 'from_layer') {
-        url = `${url}${value}`;
-      }
-      if (data[name] !== undefined) {
-        data[name] = value;
-      } else if (data.ors[name] !== undefined) {
-        data.ors[name] = value
-      } 
+        if (data[name] !== undefined) {
+          data[name] = value;
+        } else if (data.ors[name] !== undefined) {
+          data.ors[name] = value
+        }
     });
 
     try {
@@ -261,6 +269,7 @@ function Service() {
             TaskService.stopTask({
               task_id
             });
+
             GUI.showUserMessage({
               type: 'alert',
               message: statusError ? exception : 'server_error',
