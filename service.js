@@ -1,16 +1,16 @@
-import {APP} from './config/index';
+import { APP } from './config/index';
 const {
   base,
   inherit,
   XHR,
   colorHEXToRGB
-}                                     = g3wsdk.core.utils;
-const {ApplicationService}            = g3wsdk.core;
-const {CatalogLayersStoresRegistry}   = g3wsdk.core.catalog;
-const {TaskService}                   = g3wsdk.core.task;
-const {ProjectsRegistry}              = g3wsdk.core.project;
-const {PluginService}                 = g3wsdk.core.plugin;
-const {GUI}                           = g3wsdk.gui;
+}                                       = g3wsdk.core.utils;
+const { ApplicationService }            = g3wsdk.core;
+const { CatalogLayersStoresRegistry }   = g3wsdk.core.catalog;
+const { TaskService }                   = g3wsdk.core.task;
+const { ProjectsRegistry }              = g3wsdk.core.project;
+const  {PluginService }                 = g3wsdk.core.plugin;
+const { GUI }                           = g3wsdk.gui;
 
 const OpenRoutePanel = require('./components/panel/panel');
 
@@ -29,65 +29,65 @@ function Service() {
     Object
       .keys(this.config)
       .forEach(key => {
-      if (key === 'isochrones') {
-        const formProfileInput = APP.form[key][1];
-        const outputLayer = APP.form.outputs.existinglayer[0];
-        /**
-         * fill compatible layers
-         */
-        if (this.config[key].compatible) {
-          this
-            .config[key]
-            .compatible
-            .forEach(({layer_id, qgis_layer_id}) => {
-              const findLayer = project.state.layers.find(layer => layer.id === qgis_layer_id);
-              findLayer && outputLayer.input.options.values.push({
-                key: findLayer.name,
-                value: qgis_layer_id
-              })
-            });
-        }
-        /**
-         * Fill point layer input
-         */
-        if (this.config[key].pointlayers) {
-          this
-            .config[key]
-            .pointlayers
-            .forEach(({layer_id, qgis_layer_id}, index) => {
-              const keyValue = {
-                key: project.getLayerById(qgis_layer_id).getName(),
-                value: layer_id
-              };
-              APP.form.inputs.from_layer[0].input.options.values.push(keyValue);
-              if (index === 0) {
-                APP.form.inputs.from_layer[0].value = keyValue.value;
-              }
-            });
-        }
+        if (key === 'isochrones') {
+          const formProfileInput = APP.form[key][1];
+          const outputLayer = APP.form.outputs.existinglayer[0];
+          /**
+           * fill compatible layers
+           */
+          if (this.config[key].compatible) {
+            this
+              .config[key]
+              .compatible
+              .forEach(({layer_id, qgis_layer_id}) => {
+                const findLayer = project.state.layers.find(layer => layer.id === qgis_layer_id);
+                findLayer && outputLayer.input.options.values.push({
+                  key: findLayer.name,
+                  value: qgis_layer_id
+                })
+              });
+          }
+          /**
+           * Fill point layer input
+           */
+          if (this.config[key].pointlayers) {
+            this
+              .config[key]
+              .pointlayers
+              .forEach(({layer_id, qgis_layer_id}, index) => {
+                const keyValue = {
+                  key: project.getLayerById(qgis_layer_id).getName(),
+                  value: layer_id
+                };
+                APP.form.inputs.from_layer[0].input.options.values.push(keyValue);
+                if (index === 0) {
+                  APP.form.inputs.from_layer[0].value = keyValue.value;
+                }
+              });
+          }
 
-        Object
-          .keys(this.config[key].profiles)
-          .forEach(keyProfile => {
-            formProfileInput.value = formProfileInput.value === null ? keyProfile : formProfileInput.value;
-            formProfileInput.input.options.values.push({
-              key: this.config[key].profiles[keyProfile].name,
-              value: keyProfile
+          Object
+            .keys(this.config[key].profiles)
+            .forEach(keyProfile => {
+              formProfileInput.value = formProfileInput.value === null ? keyProfile : formProfileInput.value;
+              formProfileInput.input.options.values.push({
+                key: this.config[key].profiles[keyProfile].name,
+                value: keyProfile
+              })
             })
-          })
-      } else if (key === 'connections') {
-        const connections = this.config[key] || [];
-        connections
-          .reverse()
-          .forEach(connection => {
-            APP.form.outputs.newlayer[1].input.options.values.unshift({
-              key: connection.name,
-              value: connection.id
-            });
-            APP.form.outputs.newlayer[1].value = connection.id
-          })
-      }
-    });
+        } else if (key === 'connections') {
+          const connections = this.config[key] || [];
+          connections
+            .reverse()
+            .forEach(connection => {
+              APP.form.outputs.newlayer[1].input.options.values.unshift({
+                key: connection.name,
+                value: connection.id
+              });
+              APP.form.outputs.newlayer[1].value = connection.id
+            })
+          }
+      });
 
     this.state = {
       loading: false,
@@ -115,6 +115,10 @@ function Service() {
     });
   };
 
+  /**
+   *
+   * @param bool
+   */
   this.openForm = function(bool=false) {
     this.createInitStateForm();
     this.openFormPanel = new OpenRoutePanel({
@@ -124,6 +128,10 @@ function Service() {
     this.openFormPanel.show()
   };
 
+  /**
+   *
+   * @param qgis_layer_id
+   */
   this.afterRun = function(qgis_layer_id) {
     if (qgis_layer_id){
       const layer = CatalogLayersStoresRegistry.getLayerById(qgis_layer_id);
@@ -131,6 +139,13 @@ function Service() {
     } else ApplicationService.reloadCurrentProject()
   };
 
+  /**
+   *
+   * @param api
+   * @param output
+   * @param inputs
+   * @returns {Promise<void>}
+   */
   this.run = async function({api, output, inputs=[]}) {
     this.state.loading = true;
     //default params

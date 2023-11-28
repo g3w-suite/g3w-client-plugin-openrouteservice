@@ -3,8 +3,8 @@ const {
   base,
   inherit
 } = g3wsdk.core.utils;
-const {Plugin:BasePlugin} = g3wsdk.core.plugin;
-const {GUI} = g3wsdk.gui;
+const { Plugin:BasePlugin } = g3wsdk.core.plugin;
+const { GUI } = g3wsdk.gui;
 const Service = require('./service');
 
 const Plugin = function() {
@@ -55,13 +55,10 @@ Plugin.prototype.setupGUI = function () {
   GUI.addComponent(SiderBarComponent, 'sidebar', {
     position: 1
   });
-
 };
-
 
 Plugin.prototype.unload = function() {
   this.service.clear();
 }
-
 
 new Plugin();
