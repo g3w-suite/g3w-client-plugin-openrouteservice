@@ -40,11 +40,17 @@ function Service() {
               .config[key]
               .compatible
               .forEach(({layer_id, qgis_layer_id}) => {
-                const findLayer = project.state.layers.find(layer => layer.id === qgis_layer_id);
-                findLayer && outputLayer.input.options.values.push({
-                  key: findLayer.name,
-                  value: qgis_layer_id
-                })
+                const findLayer = project
+                  .state
+                  .layers
+                  .find(layer => layer.id === qgis_layer_id);
+
+                if (findLayer) {
+                  outputLayer.input.options.values.push({
+                    key: findLayer.name,
+                    value: qgis_layer_id
+                  })
+                }
               });
           }
           /**
@@ -69,7 +75,10 @@ function Service() {
           Object
             .keys(this.config[key].profiles)
             .forEach(keyProfile => {
-              formProfileInput.value = formProfileInput.value === null ? keyProfile : formProfileInput.value;
+              formProfileInput.value = formProfileInput.value === null ?
+                keyProfile :
+                formProfileInput.value;
+
               formProfileInput.input.options.values.push({
                 key: this.config[key].profiles[keyProfile].name,
                 value: keyProfile
@@ -138,7 +147,9 @@ function Service() {
   this.afterRun = function(qgis_layer_id) {
     if (qgis_layer_id) {
       const layer = CatalogLayersStoresRegistry.getLayerById(qgis_layer_id);
-      layer && layer.change();
+      if (layer) {
+        layer.change();
+      }
     } else {
       ApplicationService.reloadCurrentProject();
     }
@@ -266,6 +277,7 @@ function Service() {
             this.state.loading = false;
             this.state.task.progress = null;
             timeoutprogressintervall = null;
+
             TaskService.stopTask({
               task_id
             });
@@ -275,6 +287,7 @@ function Service() {
               message: statusError ? exception : 'server_error',
               textMessage: statusError
             });
+
           }
         };
         await TaskService.runTask({
