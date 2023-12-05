@@ -13,7 +13,8 @@ export default {
         visible: true,
         name: "name",
         type: "varchar",
-        label: "Name",
+        i18n_label: "openrouteservice.isochrones.label.name",
+        label: "",
         editable: true,
         validate: {
           required: true,
@@ -31,7 +32,8 @@ export default {
         visible: true,
         name: "profile",
         type: "varchar",
-        label: "Profile",
+        i18n_label: "openrouteservice.isochrones.label.profile",
+        label: "",
         dropdownParent: false,
         nullOption: false,
         editable: true,
@@ -54,7 +56,8 @@ export default {
         visible: true,
         name: "range_type",
         type: "varchar",
-        label: "Mode",
+        i18n_label: "openrouteservice.isochrones.label.range_type",
+        label: "",
         dropdownParent: false,
         nullOption: false,
         editable: true,
@@ -86,7 +89,8 @@ export default {
         visible: true,
         name: "range",
         type: "varchar",
-        label: "Range",
+        i18n_label: "openrouteservice.isochrones.label.range",
+        label: "",
         info: "[MIN: 1 - MAX: 60]",
         editable: true,
         validate: {
@@ -108,7 +112,8 @@ export default {
         visible: true,
         name: "interval",
         type: "float",
-        label: "Interval",
+        i18n_label: "openrouteservice.isochrones.label.interval",
+        label: "",
         editable: false,
         validate: {},
         pk: false,
@@ -127,7 +132,8 @@ export default {
         visible: true,
         name: "stroke_width",
         type: "float",
-        label: "Pen width",
+        i18n_label: "openrouteservice.isochrones.label.stroke_width",
+        label: "",
         editable: true,
         step: 0.01,
         validate: {
@@ -148,6 +154,7 @@ export default {
         visible: true,
         name: "color",
         type: "varchar",
+        i18n_label: "openrouteservice.isochrones.label.color",
         label: "Color",
         editable: true,
         validate: {},
@@ -163,7 +170,8 @@ export default {
         visible: true,
         name: "transparency",
         type: "float",
-        label: "Transparency",
+        i18n_label: "openrouteservice.isochrones.label.transparency",
+        label: "",
         editable: true,
         validate: {
           required: true,
@@ -188,9 +196,13 @@ export default {
           visible: true,
           name: 'locations',
           type: "float",
+          i18n_labels: {
+            lon: "openrouteservice.inputs.label.mapcoordinates.lon",
+            lat: "openrouteservice.inputs.label.mapcoordinates.lat",
+          },
           labels: {
-            lon: "Longitude",
-            lat: "Latitude"
+            lon: "",
+            lat: ""
           },
           epsg: 'EPSG:4326', //SET OUTPUTEPSG
           dropdownParent: false,
@@ -218,6 +230,7 @@ export default {
           visible: true,
           name: "from_layer",
           type: "varchar",
+          i18n_label: "openrouteservice.inputs.label.from_layer",
           label: "Layer",
           dropdownParent: false,
           nullOption: false,
@@ -245,7 +258,8 @@ export default {
           visible: true,
           name: "new_layer_name",
           type: "varchar",
-          label: "Layer name",
+          i18n_label: "openrouteservice.outputs.label.new_layer_name",
+          label: "",
           editable: true,
           validate: {
             required: true,
@@ -263,7 +277,8 @@ export default {
           visible: true,
           name: "connection_id",
           type: "varchar",
-          label: "Datasource",
+          i18n_label: "openrouteservice.outputs.label.connection_id",
+          label: "",
           dropdownParent: false,
           nullOption: false,
           editable: true,
@@ -278,14 +293,17 @@ export default {
             options: {
               values: [
                 {
+                  i18n_key: "openrouteservice.outputs.label.input.select.__shapefile__",
                   key: "New Shapefile", //'_', '', ''
                   value: "__shapefile__"
                 },
                 {
+                  i18n_key: "openrouteservice.outputs.label.input.select.__spatialite__",
                   key: "New Spatialite",
                   value:"__spatialite__"
                 },
                 {
+                  i18n_key: "openrouteservice.outputs.label.input.select.__geopackage__",
                   key: 'New Geopackage',
                   value: "__geopackage__"
                 }

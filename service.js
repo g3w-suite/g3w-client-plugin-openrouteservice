@@ -102,6 +102,9 @@ function Service() {
     this.state = {
       loading: false,
       form: null,
+      reload: undefined !== this.config.reload ?
+        this.config.reload :
+        true, //@since v3.7.0
       task: {
         progress: null
       }

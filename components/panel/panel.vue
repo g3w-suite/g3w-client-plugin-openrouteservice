@@ -11,7 +11,10 @@
         id="openrouteservice-plugin-form-isochrones"
         class="openrouteservice-form"
       >
-        <h5 class="openrouteservice-form-header skin-color">TRAVEL TIME (ISOCHRONE)</h5>
+        <h5
+          class="openrouteservice-form-header skin-color"
+          v-t-plugin="'openrouteservice.isochrones.title'"
+        ></h5>
         <form class="openrouteservice-form-inputs">
           <div
             v-for="input in isochrones"
@@ -22,7 +25,8 @@
               @changeinput="validate"
               :is="`${input.input.type}_input`"
               :state="input"/>
-            <span style="height: 20px; width: 100%; "></span>
+
+            <span style="height: 20px; width: 100%;"></span>
           </div>
         </form>
       </div>
@@ -41,7 +45,7 @@
                 name="radio"
                 value="mapcoordinates"
                 v-model="currentinputs">
-              <label for="mapcoordinates">Map Coordinates (EPSG:4326)</label>
+              <label for="mapcoordinates" v-t-plugin="'openrouteservice.isochrones.label.mapcoordinates'"></label>
             </div>
             <div>
               <input
@@ -52,7 +56,7 @@
                 value="from_layer"
                 :disabled="inputs.from_layer[0].input.options.values.length === 0"
                 v-model="currentinputs">
-              <label for="pointlayer">Existing Layer Point</label>
+              <label for="pointlayer" v-t-plugin="'openrouteservice.isochrones.label.pointlayer'"></label>
             </div>
           </div>
           <div
@@ -68,7 +72,9 @@
           </div>
         </form>
       </div>
+      <!--@since v3.7.0 In case di reload project show outputs-->
       <div
+        v-if="$options.service.state.reload"
         id="openrouteservice-plugin-form-outputs"
         class="openrouteservice-form"
       >
@@ -84,7 +90,9 @@
                 value="newlayer"
                 v-model="currentoutputs"
               >
-                <label for="newlayer">New Layer</label>
+                <label
+                  for="newlayer"
+                  v-t-plugin="'openrouteservice.outputs.newlayer'"></label>
             </div>
             <div>
               <input
@@ -95,7 +103,9 @@
                 value="existinglayer"
                 :disabled="this.outputs.existinglayer[0].input.options.values.length === 0"
                 v-model="currentoutputs">
-              <label for="existinglayer">Existing Layer</label>
+              <label
+                for="existinglayer"
+                v-t-plugin="'openrouteservice.outputs.existinglayer'"></label>
             </div>
           </div>
           <div
@@ -112,20 +122,25 @@
         </form>
       </div>
       <div class="openrouteservice-plugin-footer">
-        <progressbar :progress="state.task.progress"/>
+        <progressbar
+          :progress="state.task.progress"/>
         <button
-          style="font-weight: bold"
+          style="font-weight: bold; margin-bottom: 10px; margin-top: 5px;"
           class="btn btn-block skin-background-color"
           v-disabled="!validForm || state.loading"
-          @click.stop="run">Run</button>
+          @click.stop="run"
+          v-t-plugin="'openrouteservice.run'"
+        ></button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-  const Inputs = g3wsdk.gui.vue.Inputs.InputsComponents;
-  const {GUI} = g3wsdk.gui;
+  const { ApplicationState } = g3wsdk.core;
+  const Inputs               = g3wsdk.gui.vue.Inputs.InputsComponents;
+  const { tPlugin }          = g3wsdk.core.i18n;
+  const {GUI}                = g3wsdk.gui;
 
   const MAX_RANGE = {
     time: 60,
@@ -160,6 +175,55 @@
       }
     },
     methods: {
+
+      /**
+       * @since v3.7.0
+       */
+      translateInputsLabel() {
+        const _translateInputLabel = (input) => {
+          if (undefined === input.labels) {
+            input.label = tPlugin(input.i18n_label);
+            if (input.input.options && Array.isArray(input.input.options.values)) {
+              input
+                .input
+                .options
+                .values
+                .filter((value) => {
+                  if (undefined !== value.i18n_key) {
+                    value.key =  tPlugin(value.i18n_key);
+                  }
+                })
+            }
+          } else {
+            Object
+              .keys(input.labels)
+              .forEach((key) => {
+                input.labels[key] = tPlugin(input.i18n_labels[key])
+              })
+          }
+        };
+
+        Object
+          .keys(this.state.form)
+          .forEach((key) => {
+            if (Array.isArray(this.state.form[key])) {
+              this
+                .state
+                .form[key]
+                .forEach(_translateInputLabel)
+            } else {
+              Object
+                .keys(this.state.form[key])
+                .forEach((subkey) => {
+                  this
+                    .state
+                    .form[key][subkey]
+                    .forEach(_translateInputLabel)
+                })
+
+            }
+          })
+      },
       validate(input) {
         if (input) {
           if (input.name === 'range') {
@@ -215,7 +279,7 @@
       currentinputs(value) {
         this.inputs[value]
           .forEach(input => {
-            if (input.input.type === 'select' && input.value === null){
+            if (input.input.type === 'select' && input.value === null) {
               input.value = input.input.options.values[0].value;
             }
           });
@@ -224,12 +288,20 @@
       currentoutputs(value) {
         this.outputs[value]
           .forEach(input => {
-            if (input.input.type === 'select' && input.value === null){
+            if (input.input.type === 'select' && input.value === null) {
               input.value = input.input.options.values[0].value;
             }
           });
         this.validate();
       }
+    },
+    created() {
+      /**
+       * Need to translate isochrones panel because input label is not
+       * translate at g3w-client v3.7.0
+       */
+      this.translateInputsLabel();
+      this.$watch(() => ApplicationState.language, () => this.translateInputsLabel());
     },
     async mounted() {},
   };
