@@ -6,7 +6,6 @@ const {
 }                           = g3wsdk.core.utils;
 
 const { Plugin:BasePlugin } = g3wsdk.core.plugin;
-const { GUI }               = g3wsdk.gui;
 
 const Service               = require('./service');
 
@@ -29,11 +28,10 @@ const Plugin = function() {
   this.service.init(this.config);
 }
 
-
 inherit(Plugin, BasePlugin);
 
 Plugin.prototype.setupGUI = function () {
-  const SiderBarComponent = this.createSideBarComponent({},
+  this.createSideBarComponent({},
     {
       id: this.name,
       title: 'OPENROUTESERVICE',
@@ -51,13 +49,13 @@ Plugin.prototype.setupGUI = function () {
             this.service.openForm()
           }
         }
+      },
+      sidebarOptions: {
+        position: 1
       }
     }
   );
 
-  GUI.addComponent(SiderBarComponent, 'sidebar', {
-    position: 1
-  });
 };
 
 Plugin.prototype.unload = function() {
