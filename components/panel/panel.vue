@@ -72,9 +72,7 @@
           </div>
         </form>
       </div>
-      <!--@since v3.7.0 In case di reload project show outputs-->
       <div
-        v-if="$options.service.state.reload"
         id="openrouteservice-plugin-form-outputs"
         class="openrouteservice-form"
       >
