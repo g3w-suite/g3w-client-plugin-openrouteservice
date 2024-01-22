@@ -271,7 +271,12 @@
         });
 
         GUI.disableSideBar(false)
-      }
+      },
+
+      onClose() {
+        this.$options.service.clear()
+      },
+
     },
     watch: {
       currentinputs(value) {
