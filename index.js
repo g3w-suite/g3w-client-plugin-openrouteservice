@@ -30,7 +30,7 @@ const Plugin = function() {
 inherit(Plugin, BasePlugin);
 
 Plugin.prototype.setupGUI = function () {
-  this.createSideBarComponent({},
+  this.createSideBarComponent({template: '<ul></ul>'},
     {
       id: this.name,
       title: 'OPENROUTESERVICE',
