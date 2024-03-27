@@ -30,7 +30,7 @@ const Plugin = function() {
 inherit(Plugin, BasePlugin);
 
 Plugin.prototype.setupGUI = function () {
-  this.createSideBarComponent({},
+  this.createSideBarComponent({template: '<ul></ul>'},
     {
       id: this.name,
       title: 'OPENROUTESERVICE',
@@ -43,7 +43,7 @@ Plugin.prototype.setupGUI = function () {
       mobile: true,
       events: {
         open: {
-          when: 'before',
+          when: 'after',
           cb: bool => bool && this.service.openForm(), //only in case of bool true
         }
       },
