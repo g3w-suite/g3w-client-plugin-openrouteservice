@@ -44,9 +44,7 @@ Plugin.prototype.setupGUI = function () {
       events: {
         open: {
           when: 'before',
-          cb: bool => {
-            this.service.openForm()
-          }
+          cb: bool => bool && this.service.openForm(), //only in case of bool true
         }
       },
       sidebarOptions: {
