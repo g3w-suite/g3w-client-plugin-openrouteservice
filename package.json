@@ -1,6 +1,6 @@
 {
   "name": "openrouteservice",
-  "version": "3.7.1",
+  "version": "3.7.0",
   "description": "",
   "main": "index.js",
   "scripts": {

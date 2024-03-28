@@ -43,7 +43,7 @@ Plugin.prototype.setupGUI = function () {
       mobile: true,
       events: {
         open: {
-          when: 'before',
+          when: 'after',
           cb: bool => {
             //only in case of bool true
             if (bool) {
