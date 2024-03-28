@@ -30,7 +30,7 @@ const Plugin = function() {
 inherit(Plugin, BasePlugin);
 
 Plugin.prototype.setupGUI = function () {
-  this.createSideBarComponent({template: '<ul></ul>'},
+  const component = this.createSideBarComponent({template: '<ul></ul>'},
     {
       id: this.name,
       title: 'OPENROUTESERVICE',
@@ -44,7 +44,13 @@ Plugin.prototype.setupGUI = function () {
       events: {
         open: {
           when: 'before',
-          cb: bool => bool && this.service.openForm(), //only in case of bool true
+          cb: bool => {
+            //only in case of bool true
+            if (bool) {
+              this.service.openForm();
+              component.state.open = false;
+            }
+          },
         }
       },
       sidebarOptions: {
