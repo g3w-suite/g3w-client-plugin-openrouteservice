@@ -1,21 +1,21 @@
 export default {
   isochrones: {
-    title: "TRAVEL TIME (ISOCHRONE)",
+    title: "Зони доступності (ізохрони)",
     label: {
-      name: "Name",
-      profile: "Profile",
-      range_type: "Mode",
-      range: "Range",
-      interval: "Interval",
-      stroke_width: "Pen width",
-      color: "Color",
-      transparency: "Transparency",
-      mapcoordinates  : "Map Coordinates (EPSG:4326)",
-      pointlayer      : "Existing Layer Point",
+      name: "Ім'я",
+      profile: "Профіль",
+      range_type: "Режим",
+      range: "Діапазон",
+      interval: "Інтервал",
+      stroke_width: "Товщина штриха",
+      color: "Колір",
+      transparency: "Прозорість",
+      mapcoordinates  : "Координати з мапи (EPSG:4326)",
+      pointlayer      : "Точка з наявного шару",
       input: {
          select: {
-           time: "Time (minutes)",
-           distance: "Distance (meters)"
+           time: "Час (хвилини)",
+           distance: "Відстань (метри)"
          }
       }
     }
@@ -23,29 +23,29 @@ export default {
   inputs: {
     label: {
       mapcoordinates: {
-        lon: "Longitude",
-        lat: "Latitude"
+        lon: "Довгота",
+        lat: "Широта"
       },
-      from_layer: "Layer",
+      from_layer: "Шар",
     }
   },
   outputs: {
-    newlayer      : "New Layer",
-    existinglayer : "Existing Layer",
+    newlayer      : "Новий шар",
+    existinglayer : "Наявний шар",
     label: {
-      new_layer_name:"Layer name",
-      connection_id: "Datasource",
+      new_layer_name: "Ім'я шару",
+      connection_id: "Джерело даних",
       input: {
         select: {
-          __shapefile__: "New Shapefile",
-          __spatialite__: "New Spatialite",
-          __geopackage__: 'New Geopackage'
+          __shapefile__: "Новий shape-файл",
+          __spatialite__: "Нова база Spatialite",
+          __geopackage__: "Новий файл Geopackage"
         }
       },
       existinglayer: {
-        qgis_layer_id:  "Existing Layer"
+        qgis_layer_id: "Наявний шар"
       }
     }
   },
-  run: "Run"
+  run: "Виконати"
 }
