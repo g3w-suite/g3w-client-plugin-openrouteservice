@@ -1,4 +1,6 @@
-import { APP } from './config/index';
+import { APP }            from './config/index';
+import OpenRouteComponent from './components/panel.vue';
+
 const {
   base,
   inherit,
@@ -11,8 +13,6 @@ const { TaskService }                   = g3wsdk.core.task;
 const { ProjectsRegistry }              = g3wsdk.core.project;
 const  {PluginService }                 = g3wsdk.core.plugin;
 const { GUI }                           = g3wsdk.gui;
-
-const OpenRoutePanel = require('./components/panel/panel');
 
 function Service() {
   base(this);
@@ -133,9 +133,13 @@ function Service() {
    */
   this.openForm = function(bool=false) {
     this.createInitStateForm();
-    this.openFormPanel = new OpenRoutePanel({
-      service: this
+
+    this.openFormPanel = new g3wsdk.gui.Panel({
+      title: "OPENROUTESERVICE",
+      panel: new (Vue.extend(OpenRouteComponent))({ service: this }),
+      service: this,
     });
+
     GUI.closeContent();
     this.openFormPanel.show()
   };
